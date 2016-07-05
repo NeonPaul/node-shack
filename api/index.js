@@ -1,7 +1,8 @@
 var jwt = require('jsonwebtoken');
+var secret = process.env.JWT_SECRET || '';
 
 module.exports = function(resource, req, res){
-  var token = req.headers['Authorization'];
+  var token = req.headers.authorization;
   token = token && token.match(/Bearer ([^$]+)$/i)
   token = token && token[1] || null;
 
@@ -14,25 +15,29 @@ module.exports = function(resource, req, res){
   if(resource.indexOf('auth') === 0){
     switch(req.method){
       case 'POST':
-        let token = jwt.sign({ foo: 'bar' }, process.env.JWT_SECRET);
-        res.status(201);
+        let newToken = jwt.sign({ foo: 'bar' }, secret);
+        res.statusCode = 201;
+        res.end(JSON.stringify({ token: newToken }, null ,4));
         // Lookup user
         // Create token if found
         // Return with 201
         // else return with 401
         break;
       case 'GET':
-        let decoded;
-        if(decoded = jwt.verify(token, process.env.JWT_SECRET)){
-          res.status(200).end(JSON.stringify(decoded));
-        }else{
-          res.status(401).end('{ "message": "Wrong auth." }');
+        try{
+          let decoded = jwt.verify(token, secret);
+          res.statusCode = 200;
+          res.end(JSON.stringify(decoded, null, 4));
+          // Validate token and return user with 200
+          // else return with 401
+        }catch(e){
+          res.statusCode = 401;
+          res.end(`{ "message": "Wrong auth: ${e.toString()}" }`);
         }
-        // Validate token and return user with 200
-        // else return with 401
         break;
       default:
-        res.status(405).end(`{ "message": "Only POST or GET accepted." }`);
+        res.statusCode = 405;
+        res.end(`{ "message": "Only POST or GET accepted." }`);
         break;
     }
   }else{
