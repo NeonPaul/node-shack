@@ -15,13 +15,17 @@ module.exports = function(resource, req, res){
   if(resource.indexOf('auth') === 0){
     switch(req.method){
       case 'POST':
-        let newToken = jwt.sign({ foo: 'bar' }, secret);
-        res.statusCode = 201;
-        res.end(JSON.stringify({ token: newToken }, null ,4));
-        // Lookup user
-        // Create token if found
-        // Return with 201
-        // else return with 401
+        try{
+          let newToken = jwt.sign({ foo: 'bar' }, secret);
+          res.statusCode = 201;
+          res.end(JSON.stringify({ token: newToken }, null ,4));
+          // Lookup user
+          // Create token if found
+          // Return with 201
+          // else return with 401
+        }catch(e){
+          res.end(JSON.stringify(e.toString()));
+        }
         break;
       case 'GET':
         try{
