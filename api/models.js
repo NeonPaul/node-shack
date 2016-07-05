@@ -22,15 +22,17 @@ var proto = {
   }
 };
 
-var User = quell('users', {
-  ...proto,
-  public: ['email']
-});
+var User = quell('users', Object.assign({
+    public: ['email']
+  },
+  proto)
+);
 
 User.load = function(...args){
   var record = new this();
-  record.load(...args).then(
+  return record.load(...args).then(
     exists => {
+      console.log(exists, record);
       if(exists)
         return record;
       

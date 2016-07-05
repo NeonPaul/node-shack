@@ -1,12 +1,24 @@
 var jwt = require('jsonwebtoken');
 var models = require('./models');
 var PasswordHash = require('phpass').PasswordHash;
+var passwordHash = new PasswordHash();
 var secret = process.env.JWT_SECRET || '';
 
+function parseBody(request){
+  return new Promise(resolve => {
+    var body = [];
+    request.on('data', function(chunk) {
+      body.push(chunk);
+    }).on('end', function() {
+      body = Buffer.concat(body).toString();
+      resolve(body);
+    });
+  });
+}
 
 
 function getUser(email){
-  return User.load({ email });
+  return models.User.load({ email });
 }
 
 module.exports = function(resource, req, res){
@@ -17,16 +29,19 @@ module.exports = function(resource, req, res){
   var request = {
     resource,
     method: req.method
-  }
+  };
   res.setHeader('Content-Type', 'application/json');
 
   if(resource.indexOf('auth') === 0){
     switch(req.method){
       case 'POST':
         try{
-          getUser('neonpaul@gmail.com').then(user => {
-            var password = 'abc123';
-            var success = passwordHash.checkPassword(password, user.password);
+          var postBody;
+          parseBody(req).then(body => {
+            postBody = JSON.parse(body);
+            return getUser(body.email);
+          }).then(user => {
+            var success = passwordHash.checkPassword(postBody.password, user.password);
 
             let newToken = jwt.sign({ email: user.email }, secret);
             res.statusCode = 201;
@@ -45,7 +60,6 @@ module.exports = function(resource, req, res){
         break;
       case 'GET':
         try{
-          var passwordHash = new PasswordHash();
           let decoded = jwt.verify(token, secret);
           res.statusCode = 200;
           res.end(JSON.stringify(decoded, null, 4));
