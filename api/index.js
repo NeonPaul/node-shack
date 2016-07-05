@@ -1,26 +1,12 @@
 var jwt = require('jsonwebtoken');
+var models = require('./models');
 var PasswordHash = require('phpass').PasswordHash;
-var mysql      = require('mysql');
 var secret = process.env.JWT_SECRET || '';
 
-var connection = mysql.createConnection({
-  host     : process.env.OPENSHIFT_MYSQL_DB_HOST,
-  user     : process.env.DB_USER,
-  password : process.env.DB_PASS,
-  database : 'shack'
-});
-connection.connect();
 
 
 function getUser(email){
-  email = email.replace(/'/g, `\\'`);
-  return new Promise(function(res, rej){
-    var sql = `SELECT * FROM \`users\` WHERE \`email\`='${email}'`;
-    connection.query(sql, function(err, rows, fields) {
-      if (err) rej(err);
-      res(rows[0]);
-    });
-  });
+  return User.load({ email });
 }
 
 module.exports = function(resource, req, res){

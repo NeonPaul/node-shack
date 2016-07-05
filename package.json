@@ -12,6 +12,7 @@
   "dependencies": {
     "jsonwebtoken": "^7.0.1",
     "mysql": "^2.11.1",
-    "phpass": "^0.1.1"
+    "phpass": "^0.1.1",
+    "quell": "^0.1.2"
   }
 }
