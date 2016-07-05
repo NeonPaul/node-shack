@@ -1,5 +1,27 @@
 var jwt = require('jsonwebtoken');
+var PasswordHash = require('phpass').PasswordHash;
+var mysql      = require('mysql');
 var secret = process.env.JWT_SECRET || '';
+
+var connection = mysql.createConnection({
+  host     : process.env.OPENSHIFT_MYSQL_DB_HOST,
+  user     : process.env.DB_USER,
+  password : process.env.DB_PASS,
+  database : 'shack'
+});
+connection.connect();
+
+
+function getUser(email){
+  email = email.replace(/'/g, `\\'`);
+  return new Promise(function(res, rej){
+    var sql = `SELECT * FROM \`users\` WHERE \`email\`='${email}'`;
+    connection.query(sql, function(err, rows, fields) {
+      if (err) rej(err);
+      res(rows[0]);
+    });
+  });
+}
 
 module.exports = function(resource, req, res){
   var token = req.headers.authorization;
@@ -16,9 +38,17 @@ module.exports = function(resource, req, res){
     switch(req.method){
       case 'POST':
         try{
-          let newToken = jwt.sign({ foo: 'bar' }, secret);
-          res.statusCode = 201;
-          res.end(JSON.stringify({ token: newToken }, null ,4));
+          getUser('neonpaul@gmail.com').then(user => {
+            var password = 'abc123';
+            var success = passwordHash.checkPassword(password, user.password);
+
+            let newToken = jwt.sign({ email: user.email }, secret);
+            res.statusCode = 201;
+            res.end(JSON.stringify({ token: newToken }, null ,4));
+          }).catch(e => {
+            res.end(JSON.stringify(e.toString()));
+          });
+
           // Lookup user
           // Create token if found
           // Return with 201
@@ -29,6 +59,7 @@ module.exports = function(resource, req, res){
         break;
       case 'GET':
         try{
+          var passwordHash = new PasswordHash();
           let decoded = jwt.verify(token, secret);
           res.statusCode = 200;
           res.end(JSON.stringify(decoded, null, 4));
