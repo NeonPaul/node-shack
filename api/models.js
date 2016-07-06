@@ -29,7 +29,9 @@ var User = quell('users', Object.assign({
 );
 
 User.load = function(...args){
+  console.log(args);
   var record = new this();
+  console.log(record, this);
   return record.load(...args).then(
     exists => {
       console.log(exists, record);

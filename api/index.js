@@ -49,9 +49,10 @@ module.exports = function(resource, req, res){
             res.statusCode = 201;
             res.end(JSON.stringify({ token: newToken }, null ,4));
           }).catch(e => {
-            res.end(JSON.stringify(`${e.message}
-
-              ${e.stack}`));
+            res.end(JSON.stringify({
+              stack: `${e.stack}`,
+              schema: models.User.schema
+            }));
           });
 
           // Lookup user
