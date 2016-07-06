@@ -18,6 +18,7 @@ function parseBody(request){
 
 
 function getUser(email){
+  console.log('email', email);
   return models.User.load({ email });
 }
 
@@ -39,8 +40,9 @@ module.exports = function(resource, req, res){
           var postBody;
           parseBody(req).then(body => {
             postBody = JSON.parse(body);
-            return getUser(body.email);
+            return getUser(postBody.email);
           }).then(user => {
+            console.log('user', JSON.stringify(user));
             var success = passwordHash.checkPassword(postBody.password, user.password);
 
             let newToken = jwt.sign({ email: user.email }, secret);
