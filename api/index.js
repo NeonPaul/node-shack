@@ -47,7 +47,9 @@ module.exports = function(resource, req, res){
             res.statusCode = 201;
             res.end(JSON.stringify({ token: newToken }, null ,4));
           }).catch(e => {
-            res.end(JSON.stringify(e.toString()));
+            res.end(JSON.stringify(`${e.message}
+
+              ${e.stack}`));
           });
 
           // Lookup user
