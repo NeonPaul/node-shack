@@ -10,9 +10,10 @@
   "author": "Ionut-Cristian Florescu <ionut.florescu@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "bookshelf": "^0.10.0",
     "jsonwebtoken": "^7.0.1",
+    "knex": "^0.11.7",
     "mysql": "^2.11.1",
-    "phpass": "NeonPaul/node-phpass#patch-1",
-    "quell": "^0.1.2"
+    "phpass": "NeonPaul/node-phpass#patch-1"
   }
 }

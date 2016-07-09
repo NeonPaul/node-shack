@@ -19,7 +19,7 @@ function parseBody(request){
 
 function getUser(email){
   console.log('email', email);
-  return models.User.load({ email });
+  return models.User.where('email', email).fetch();
 }
 
 module.exports = function(resource, req, res){
@@ -42,8 +42,8 @@ module.exports = function(resource, req, res){
             postBody = JSON.parse(body);
             return getUser(postBody.email);
           }).then(user => {
-            console.log('user', JSON.stringify(user));
-            var success = passwordHash.checkPassword(postBody.password, user.password);
+            console.log(postBody, user);
+            var success = passwordHash.checkPassword(postBody.password, user.get('password'));
 
             let newToken = jwt.sign({ email: user.email }, secret);
             res.statusCode = 201;
