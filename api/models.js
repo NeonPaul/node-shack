@@ -10,12 +10,17 @@ var knex = require('knex')({
 });
 
 var bookshelf = require('bookshelf')(knex);
+bookshelf.plugin('pagination');
 
 var User = bookshelf.Model.extend({
   tableName: 'users'
 });
 
+var Post = bookshelf.Model.extend({
+  tableName: 'posts'
+});
 
 module.exports = {
-  User
+  User,
+  Post
 };

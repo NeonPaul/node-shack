@@ -22,6 +22,11 @@ function getUser(email){
   return models.User.where('email', email).fetch();
 }
 
+function authenticate(token){
+  let decoded = jwt.verify(token, secret);
+  return getUser(decoded.email);
+}
+
 module.exports = function(resource, req, res){
   var token = req.headers.authorization;
   token = token && token.match(/Bearer ([^$]+)$/i)
@@ -45,13 +50,12 @@ module.exports = function(resource, req, res){
             console.log(postBody, user);
             var success = passwordHash.checkPassword(postBody.password, user.get('password'));
 
-            let newToken = jwt.sign({ email: user.email }, secret);
+            let newToken = jwt.sign({ email: user.get('email') }, secret);
             res.statusCode = 201;
             res.end(JSON.stringify({ token: newToken }, null ,4));
           }).catch(e => {
             res.end(JSON.stringify({
-              stack: `${e.stack}`,
-              schema: models.User.schema
+              stack: `${e.stack}`
             }));
           });
 
@@ -65,9 +69,14 @@ module.exports = function(resource, req, res){
         break;
       case 'GET':
         try{
-          let decoded = jwt.verify(token, secret);
-          res.statusCode = 200;
-          res.end(JSON.stringify(decoded, null, 4));
+          authenticate(token).then(function(user){
+            res.statusCode = 200;
+            res.end(JSON.stringify(user, null, 4));
+          }).catch(function(e){
+            res.statusCode = 401;
+            res.end(JSON.stringify(e.stack, null, 4));
+          });
+
           // Validate token and return user with 200
           // else return with 401
         }catch(e){
@@ -80,6 +89,23 @@ module.exports = function(resource, req, res){
         res.end(`{ "message": "Only POST or GET accepted." }`);
         break;
     }
+  }else if(resource.indexOf('posts') === 0){
+    switch(req.method){
+      case "GET":
+        authenticate(token).then(function(){
+          models.Post.forge().orderBy('time', 'DESC').fetchPage({
+            pageSize: 50
+          }).then(function(posts){
+            res.end(JSON.stringify(posts, null, 4));
+          });
+        });
+        break;
+      default:
+        res,statusCode = 405;
+        res.end('405');
+        break;
+    }
+
   }else{
     res.end(JSON.stringify(request, null, 4));
   }
