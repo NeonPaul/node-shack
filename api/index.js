@@ -28,17 +28,52 @@ function authenticate(token){
 }
 
 module.exports = function(resource, req, res){
+  function output(data){
+    var doc = {
+      data
+    };
+    res.end(JSON.stringify(doc), null, 4);
+  }
+
+  function httpError(code, e){
+    var doc = {
+      errors: [
+        {
+          code: String(code),
+          meta: {
+            stack: e && e.stack
+          }
+        }
+      ]
+    };
+    res.statusCode = code;
+    res.end(JSON.stringify(doc, null, 4));
+  }
+
+  function outputError(e){
+    var doc = {
+      errors: [
+        {
+         status: '500',
+         meta: {
+           stack: e.stack
+         }
+        }
+      ]
+    };
+    res.statusCode = 500;
+    res.end(JSON.stringify(doc, null, 4));
+  }
+
   var token = req.headers.authorization;
   token = token && token.match(/Bearer ([^$]+)$/i)
   token = token && token[1] || null;
 
-  var request = {
-    resource,
-    method: req.method
-  };
   res.setHeader('Content-Type', 'application/json');
 
-  if(resource.indexOf('auth') === 0){
+  resource = resource.replace(/\/+$/, '');
+
+  if(resource === 'auth'){
     switch(req.method){
       case 'POST':
         try{
@@ -49,14 +84,11 @@ module.exports = function(resource, req, res){
           }).then(user => {
             console.log(postBody, user);
             var success = passwordHash.checkPassword(postBody.password, user.get('password'));
-
             let newToken = jwt.sign({ email: user.get('email') }, secret);
-            res.statusCode = 201;
-            res.end(JSON.stringify({ token: newToken }, null ,4));
+
+            output({ token: newToken }, 201);
           }).catch(e => {
-            res.end(JSON.stringify({
-              stack: `${e.stack}`
-            }));
+            outputError(e);
           });
 
           // Lookup user
@@ -64,29 +96,25 @@ module.exports = function(resource, req, res){
           // Return with 201
           // else return with 401
         }catch(e){
-          res.end(JSON.stringify(e.toString()));
+          outputError(e);
         }
         break;
       case 'GET':
         try{
           authenticate(token).then(function(user){
-            res.statusCode = 200;
-            res.end(JSON.stringify(user, null, 4));
+            output(user);
           }).catch(function(e){
-            res.statusCode = 401;
-            res.end(JSON.stringify(e.stack, null, 4));
+            httpError(401, e);
           });
 
           // Validate token and return user with 200
           // else return with 401
         }catch(e){
-          res.statusCode = 401;
-          res.end(`{ "message": "Wrong auth: ${e.toString()}" }`);
+          httpError(401, e);
         }
         break;
       default:
-        res.statusCode = 405;
-        res.end(`{ "message": "Only POST or GET accepted." }`);
+        httpError(405);
         break;
     }
   }else if(resource.indexOf('posts') === 0){
@@ -96,17 +124,16 @@ module.exports = function(resource, req, res){
           models.Post.forge().orderBy('time', 'DESC').fetchPage({
             pageSize: 50
           }).then(function(posts){
-            res.end(JSON.stringify(posts, null, 4));
+            output(posts);
           });
         });
         break;
       default:
-        res,statusCode = 405;
-        res.end('405');
+        httpError(405)
         break;
     }
 
   }else{
-    res.end(JSON.stringify(request, null, 4));
+    httpError(404);
   }
 }
