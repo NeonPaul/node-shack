@@ -40,6 +40,8 @@ router.use(bp.json())
 
 router.post('/auth', function(req, res){
   var user = getUser(req.body.email)
+  console.log(req.body.email)
+  console.log(user.get('password'))
   var success = passwordHash.checkPassword(req.body.password, user.get('password'))
   var newToken = jwt.sign({ email: user.get('email') }, secret);
 
