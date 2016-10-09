@@ -41,12 +41,17 @@ router.use(bp.json())
 router.post('/auth', function(req, res){
   var user = getUser(req.body.email)
 
+  console.log(0)
+
   Promise.all([
     user.get('email'),
     user.get('password')
   ]).then(([email, password]) => {
+    console.log(1)
     var success = passwordHash.checkPassword(req.body.password, password)
+    console.log(2)
     var newToken = jwt.sign({ email }, secret)
+    console.log(3)
 
     res.json({ token: newToken })
   }, function(e){
