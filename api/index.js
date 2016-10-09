@@ -2,7 +2,7 @@ var jwt = require('jsonwebtoken');
 var models = require('./models');
 var PasswordHash = require('phpass').PasswordHash;
 var passwordHash = new PasswordHash();
-var secret = process.env.JWT_SECRET || '';
+var secret = process.env.JWT_SECRET || 'secret';
 var router = require('express').Router()
 var bp = require('body-parser')
 
@@ -40,19 +40,15 @@ router.use(bp.json())
 
 router.post('/auth', function(req, res){
   var user = getUser(req.body.email)
-  console.log(user)
+
   user.then(user => {
-    console.log(user)
     return Promise.all([
       user.get('email'),
       user.get('password')
     ])
   }).then(([email, password]) => {
-    console.log(email, password)
     var success = passwordHash.checkPassword(req.body.password, password)
-    console.log(2)
     var newToken = jwt.sign({ email }, secret)
-    console.log(3)
 
     res.json({ token: newToken })
   }, function(e){
@@ -67,13 +63,17 @@ router.use(function(req, res, next){
     return
   }
   var user = authenticate(token)
-  req.user = user
+  .then(user => {
+    req.user = user
 
-  if(user){
-    next()
-  }else{
-    res.sendStatus(403)
-  }
+    if(user){
+      next()
+    }else{
+      res.sendStatus(403)
+    }
+  }, e => {
+    res.status(500).send(e.toString())
+  })
 })
 
 router.get('/auth', function(req, res){
