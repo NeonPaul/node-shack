@@ -6,7 +6,7 @@
   "main": "start.js",
   "scripts": {
     "start": "node --use_strict start.js",
-    "build": "webpack ./src/main.js static/bundle.js"
+    "webpack": "node ./build/build.js"
   },
   "author": "Ionut-Cristian Florescu <ionut.florescu@gmail.com>",
   "license": "ISC",
@@ -30,9 +30,7 @@
     "vue-html-loader": "^1.2.3",
     "vue-loader": "^9.5.1",
     "vuex": "^2.0.0",
+    "webpack": "^1.13.2",
     "whatwg-fetch": "^1.0.0"
-  },
-  "devDependencies": {
-    "webpack": "^1.13.2"
   }
 }
