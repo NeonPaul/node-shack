@@ -1,7 +1,7 @@
 var sysInfo = require('./utils/sys-info')
 var env     = process.env
 var express = require('express')
-
+var api = require('./api')
 
 var app = express()
 
@@ -20,6 +20,8 @@ app.get('/info/:type', function(req, res, next){
   }
 })
 app.use(express.static(__dirname + '/static'))
+
+app.use('/api', api)
 
 app.listen(env.NODE_PORT || 3000, env.NODE_IP || 'localhost', function () {
   console.log(`Application worker ${process.pid} started...`)
