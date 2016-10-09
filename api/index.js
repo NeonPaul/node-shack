@@ -40,12 +40,18 @@ router.use(bp.json())
 
 router.post('/auth', function(req, res){
   var user = getUser(req.body.email)
-  console.log(req.body.email)
-  console.log(user.get('password'))
-  var success = passwordHash.checkPassword(req.body.password, user.get('password'))
-  var newToken = jwt.sign({ email: user.get('email') }, secret);
 
-  res.json({ token: newToken })
+  Promise.all([
+    user.get('email'),
+    user.get('password')
+  ]).then(([email, password]) => {
+    var success = passwordHash.checkPassword(req.body.password, password)
+    var newToken = jwt.sign({ email }, secret)
+
+    res.json({ token: newToken })
+  }, function(e){
+    res.status(500).send(e.toString())
+  })
 })
 
 router.use(function(req, res, next){
@@ -76,7 +82,7 @@ router.get('/posts', function(req, res){
   }).then(function(posts){
     res.json(posts)
   }, function(e){
-    res.status(500).json(e)
+    res.status(500).send(e.toString())
   })
 })
 
