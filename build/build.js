@@ -4,7 +4,8 @@ var config = require('./webpack.config.js')
 var compiler = webpack(config)
 
 compiler.run(function(err, stats){
-  console.log(err || stats)
+  if(err) throw err
+  console.log(stats)
 })
 
 
