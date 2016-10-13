@@ -3,7 +3,7 @@ require('whatwg-fetch')
 module.exports.auth = function(url){
   return {
     verify: function (token) {
-      fetch(url, {
+      return fetch(url, {
         headers: {
           Authorization: 'Bearer ' + token
         }
@@ -15,9 +15,12 @@ module.exports.auth = function(url){
 
         return response.json()
       })
+      .then(function(json){
+        return json.data
+      })
     },
     requestToken: function (credentials) {
-      fetch(url, {
+      return fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
