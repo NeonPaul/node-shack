@@ -48,9 +48,15 @@ router.post('/auth', function(req, res){
     ])
   }).then(([email, password]) => {
     var success = passwordHash.checkPassword(req.body.password, password)
-    var newToken = jwt.sign({ email }, secret)
+    if(success){
+      var newToken = jwt.sign({ email }, secret)
 
-    res.json({ token: newToken })
+      res.json({ token: newToken })
+    }else{
+      res.status(403).json({
+        error: 'Wrong username or password.'
+      })
+    }
   }, function(e){
     res.status(500).send(e.toString())
   })
