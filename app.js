@@ -19,6 +19,11 @@ app.get('/info/:type', function(req, res, next){
     next()
   }
 })
+
+if(app.get('env') === 'development'){
+  app.use(require('./dev'))
+}
+
 app.use(express.static(__dirname + '/static'))
 
 app.use('/api', api)
