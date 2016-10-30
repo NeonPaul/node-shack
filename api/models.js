@@ -11,9 +11,18 @@ var knex = require('knex')({
 
 var bookshelf = require('bookshelf')(knex);
 bookshelf.plugin('pagination');
+bookshelf.plugin('visibility')
 
 var User = bookshelf.Model.extend({
-  tableName: 'users'
+  tableName: 'users',
+  hidden: ['password',
+           'passwd',
+           'auth_type',
+           'money',
+           'u_status',
+           'profile',
+           'status',
+           'login']
 });
 
 var Post = bookshelf.Model.extend({
