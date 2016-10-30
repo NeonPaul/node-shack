@@ -12,5 +12,8 @@ module.exports = {
     .then(user => {
       store.commit(types.user.SET, user)
     })
+    .catch(() => {
+      store.commit(types.alert.ERROR, 'Could not log in.')
+    })
   }
 }
