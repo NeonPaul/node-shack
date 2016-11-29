@@ -1,7 +1,7 @@
 var Vue = require('vue')
 var App = require('./app.vue')
 var store = require('./store')
-require('bulma/bulma.sass')
+require('bulma/css/bulma.css')
 
 var vm = new Vue(
   Vue.util.extend(
