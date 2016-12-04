@@ -6,11 +6,6 @@ try {
   require('bulma')
 } catch (e) {
   console.error(e)
-  try {
-    require('bulma/css/bulma.css')
-  } catch (e) {
-    console.error(e)
-  }
 }
 
 var vm = new Vue(
@@ -21,3 +16,5 @@ var vm = new Vue(
 )
 
 vm.$mount('#app')
+
+require('bulma/css/bulma.css')
