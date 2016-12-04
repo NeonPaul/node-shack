@@ -1,14 +1,13 @@
-var Vuex = require('vuex')
-var Vue = require('vue')
-var modules = require('./modules').default
-var actions = require('./actions')
+import Vuex from 'vuex'
+import Vue from 'vue'
+import modules from './modules'
+import actions from './actions'
+import _ from 'lodash'
 
 Vue.use(Vuex)
 
 var store = module.exports = new Vuex.Store({
-  actions: actions
+  actions
 })
 
-for(let name of Object.keys(modules)){
-  store.registerModule(name, modules[name])
-}
+_.forEach(modules, (value, key) => store.registerModule(key, value))

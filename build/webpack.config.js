@@ -18,7 +18,23 @@ module.exports = {
       {
         test: /\.s[ca]ss$/,
         loaders: ['style', 'css', 'sass']
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader'
       }
     ]
+  },
+
+  vue: {
+    loaders: {
+      js: 'babel'
+    }
+  },
+
+  babel: {
+    presets: ['es2015'],
+    plugins: ['transform-runtime', 'transform-es2015-modules-commonjs']
   }
 }

@@ -10,12 +10,12 @@
 </template>
 
 <script>
-var Auth = require('./auth.vue')
-var mapGetters = require('vuex').mapGetters
+import Auth from './auth.vue'
+import {mapGetters} from 'vuex'
 
-module.exports = {
+export default {
   components: {
-    Auth: Auth
+    Auth
   },
   computed: mapGetters(['user'])
 }

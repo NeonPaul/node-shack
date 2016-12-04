@@ -28,8 +28,8 @@
 </template>
 
 <script>
-var mapGetters = require('vuex').mapGetters
-var mapActions = require('vuex').mapActions
+import {mapGetters, mapActions } from 'vuex'
+
 module.exports = {
   data: function(){
     return {

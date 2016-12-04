@@ -1,11 +1,11 @@
-var Vue = require('vue')
-var App = require('./app.vue')
-var store = require('./store')
-require('bulma/css/bulma.css')
+import Vue from 'vue'
+import App from './app.vue'
+import store from './store'
+import 'bulma/css/bulma.css'
 
 var vm = new Vue(
   Vue.util.extend(
-    { store: store },
+    { store },
     App
   )
 )

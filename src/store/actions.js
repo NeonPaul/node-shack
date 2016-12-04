@@ -1,10 +1,10 @@
-var api = require('./api')
-var types = require('./modules').types
+import {auth as Auth} from './api'
+import {types} from './modules'
 
-var auth = api.auth('/api/auth')
+var auth = Auth('/api/auth')
 
-module.exports = {
-  login: function(store, payload){
+export default {
+  login: function (store, payload) {
     auth.requestToken(payload)
     .then(token => {
       return auth.verify(token)
