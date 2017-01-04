@@ -1,19 +1,26 @@
-import {auth as Auth} from './api'
+import Api from './api'
 import {types} from './modules'
 
-var auth = Auth('/api/auth')
+var api = Api('/api')
 
 export default {
   login: function (store, payload) {
-    auth.requestToken(payload)
+    api.requestToken(payload)
     .then(token => {
-      return auth.verify(token)
+      console.log(token)
+      return api.verify(token)
     })
     .then(user => {
       store.commit(types.user.SET, user)
+      store.dispatch('loadPosts')
     })
-    .catch(() => {
-      store.commit(types.alert.ERROR, 'Could not log in.')
+    .catch(e => {
+      store.commit(types.alert.ERROR, e || 'Could not log in.')
     })
+  },
+  loadPosts: function (store, payload) {
+    api.fetch('/posts').then(
+      response => store.commit(types.posts.SET, response.data)
+    )
   }
 }

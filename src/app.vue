@@ -5,18 +5,20 @@
     </auth>
     <div v-else>
       <h1>Hi, {{user.user}}!</h1>
+      {{ posts }}
     </div>
   </div>
 </template>
 
 <script>
 import Auth from './auth.vue'
-import {mapGetters} from 'vuex'
+import {mapGetters, mapActions} from 'vuex'
 
 export default {
   components: {
     Auth
   },
-  computed: mapGetters(['user'])
+  computed: mapGetters(['user', 'posts']),
+  methods: mapActions(['loadPosts'])
 }
 </script>

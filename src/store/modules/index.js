@@ -1,9 +1,10 @@
-import user from './user'
+import basic from './basic'
 import alert from './alert'
 import _ from 'lodash'
 
 var modules = {
-  user,
+  user: basic('user'),
+  posts: basic('posts'),
   alert
 }
 
