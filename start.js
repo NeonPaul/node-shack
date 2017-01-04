@@ -1,4 +1,5 @@
 const cluster = require('cluster'),
+      spawn = require('child_process').spawn,
       stopSignals = [
         'SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
         'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
@@ -25,6 +26,10 @@ if (cluster.isMaster) {
     cluster.fork();
   }
   if (production) {
+    var build = spawn('npm', ['run', 'webpack'])
+    build.stdout.on('data', data => process.stdout.write(data))
+    build.stderr.on('data', data => process.stderr.write(data))
+
     stopSignals.forEach(function (signal) {
       process.on(signal, function () {
         console.log(`Got ${signal}, stopping workers...`);
