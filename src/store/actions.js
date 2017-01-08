@@ -3,6 +3,12 @@ import {types} from './modules'
 
 var api = Api('/api')
 
+function key (record) {
+  return record.type + record.id
+}
+
+export {key}
+
 export default {
   login: function (store, payload) {
     api.requestToken(payload)
@@ -24,7 +30,7 @@ export default {
           ...response.data,
           ...response.included
         ])
-        store.commit('SET_POSTS', response.data.map(post => post.id))
+        store.commit('SET_POSTS', response.data.map(post => key(post)))
       }
     )
   }

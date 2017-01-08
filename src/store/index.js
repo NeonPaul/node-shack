@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
 import modules from './modules'
-import actions from './actions'
+import actions, {key} from './actions'
 import _ from 'lodash'
 
 Vue.use(Vuex)
@@ -19,12 +19,13 @@ function expand (record, records) {
     record.relationships,
     rel => to(
       rel.data,
-      link => expand(records[link.id], records)
+      link => expand(records[key(link)], records)
     )
   )
 
   return Object.assign({
-       id: record.id
+       id: record.id,
+       type: record.type
       },
       record.attributes,
       linked
@@ -45,7 +46,7 @@ var store = module.exports = new Vuex.Store({
   mutations: {
     ADD_RECORDS: (state, payload) => {
       var records = Object.assign({}, state.records)
-      payload.forEach(record => records[record.id] = record)
+      payload.forEach(record => records[key(record)] = record)
       state.records = records
     },
     SET_POSTS: (state, payload) =>
