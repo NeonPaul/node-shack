@@ -96,7 +96,7 @@ router.get('/posts', function(req, res){
     page: {
       limit: 50
     },
-    sort: ['-time'],
+    sort: ['time'],
     include: ['author']
   }).then(function(posts){
     res.json(mapper.map(posts, 'post'))

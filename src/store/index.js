@@ -9,7 +9,9 @@ Vue.use(Vuex)
 function to (items, mapper) {
   if (Array.isArray(items)) {
     return items.map(mapper)
-  } else {
+  }
+
+  if (items) {
     return mapper(items)
   }
 }
