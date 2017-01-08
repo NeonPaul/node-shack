@@ -4,7 +4,6 @@ import _ from 'lodash'
 
 var modules = {
   user: basic('user'),
-  posts: basic('posts'),
   alert
 }
 

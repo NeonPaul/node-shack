@@ -12,6 +12,7 @@ var knex = require('knex')({
 var bookshelf = require('bookshelf')(knex);
 bookshelf.plugin('pagination');
 bookshelf.plugin('visibility')
+bookshelf.plugin(require('bookshelf-jsonapi-params'))
 
 var User = bookshelf.Model.extend({
   tableName: 'users',
@@ -26,7 +27,10 @@ var User = bookshelf.Model.extend({
 });
 
 var Post = bookshelf.Model.extend({
-  tableName: 'posts'
+  tableName: 'posts',
+  author: function () {
+    return this.belongsTo(User)
+  }
 });
 
 module.exports = {

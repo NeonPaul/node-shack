@@ -5,6 +5,9 @@ var passwordHash = new PasswordHash();
 var secret = process.env.JWT_SECRET || 'secret';
 var router = require('express').Router()
 var bp = require('body-parser')
+var Mapper = require('jsonapi-mapper')
+
+var mapper = new Mapper.Bookshelf()
 
 function parseBody(request){
   return new Promise(resolve => {
@@ -58,7 +61,7 @@ router.post('/auth', function(req, res){
       })
     }
   }, function(e){
-    res.status(500).send(e.toString())
+    res.status(500).send(e.message)
   })
 })
 
@@ -78,7 +81,7 @@ router.use(function(req, res, next){
       res.sendStatus(403)
     }
   }, e => {
-    res.status(500).send(e.toString())
+    res.status(500).send(e.message)
   })
 })
 
@@ -89,12 +92,16 @@ router.get('/auth', function(req, res){
 })
 
 router.get('/posts', function(req, res){
-  models.Post.forge().orderBy('time', 'DESC').fetchPage({
-    pageSize: 50
+  models.Post.forge().fetchJsonApi({
+    page: {
+      limit: 50
+    },
+    sort: ['-time'],
+    include: ['author']
   }).then(function(posts){
-    res.json(posts)
+    res.json(mapper.map(posts, 'post'))
   }, function(e){
-    res.status(500).send(e.toString())
+    res.status(500).send(e.message)
   })
 })
 
