@@ -10,7 +10,6 @@ var knex = require('knex')({
 });
 
 var bookshelf = require('bookshelf')(knex);
-bookshelf.plugin('pagination');
 bookshelf.plugin('visibility')
 bookshelf.plugin(require('bookshelf-jsonapi-params'))
 
