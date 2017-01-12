@@ -1,16 +1,22 @@
 <template>
   <div>
     <auth v-if="!user" class="column is-half is-offset-one-quarter">
-
     </auth>
     <div v-else>
-      <h1>Hi, {{user.user}}!</h1>
-      <div class="columns">
-        <div class="column is-11">
+      <div class="media">
+        <figure class="media-left">
+          <p class="image is-64x64">
+            <img :src="user.avatar">
+          </p>
+        </figure>
+        <div class="media-content">
+          <strong>{{ user.user }}</strong>
           <textarea></textarea>
+          <div>
+            <a class="button is-primary is-medium"
+               @click="addPost">Post</a>
+          </div>
         </div>
-        <a class="column button is-primary is-medium"
-           @click="addPost">Post</a>
       </div>
       <div v-for="post in posts" class="media">
         <figure class="media-left">
@@ -21,7 +27,8 @@
         <div class="media-content">
           <div class="content">
             <strong>{{ post.author && post.author.user }}</strong><br>
-            {{ post.content }}
+            <span v-html="markdown(post.content)"
+                  class="content box"></span>
           </div>
         </div>
       </div>
@@ -35,6 +42,7 @@ import {mapGetters, mapActions} from 'vuex'
 import SimpleMDE from 'simplemde'
 import Vue from 'vue'
 import 'simplemde/dist/simplemde.min.css'
+import marked from 'marked'
 
 export default {
   data() {
@@ -44,7 +52,12 @@ export default {
     user(u) {
       if (u) {
         Vue.nextTick(() => {
-          this.mde = new SimpleMDE()
+          this.mde = new SimpleMDE({
+            autosave: true,
+            autofocus: true,
+            indentWithTabs: false,
+            status: false
+          })
         })
       }
     }
@@ -58,6 +71,9 @@ export default {
       addPost() {
         this.post(this.mde.value())
         this.mde.value('')
+      },
+      markdown (content) {
+        return marked(content)
       }
     },
     mapActions(['loadPosts', 'post'])

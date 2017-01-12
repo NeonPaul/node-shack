@@ -27,6 +27,7 @@
     "jsonwebtoken": "^7.0.1",
     "knex": "^0.11.7",
     "lodash": "^4.17.2",
+    "marked": "^0.3.6",
     "mysql": "^2.11.1",
     "node-sass": "^3.10.1",
     "phpass": "NeonPaul/node-phpass#patch-1",
