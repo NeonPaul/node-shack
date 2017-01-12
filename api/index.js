@@ -8,6 +8,12 @@ var bp = require('body-parser')
 var Mapper = require('jsonapi-mapper')
 
 var mapper = new Mapper.Bookshelf()
+var mapperConfig =  {
+  typeForModel: {
+    author: 'user',
+    post: 'post'
+  }
+}
 
 function parseBody(request){
   return new Promise(resolve => {
@@ -40,6 +46,9 @@ function getToken(req){
 }
 
 router.use(bp.json())
+router.use(bp.json({
+  type: 'application/vnd.api+json'
+}))
 
 router.post('/auth', function(req, res){
   var user = getUser(req.body.email)
@@ -99,10 +108,41 @@ router.get('/posts', function(req, res){
     sort: ['-time'],
     include: ['author']
   }).then(function(posts){
-    res.json(mapper.map(posts, 'post'))
+    res.json(mapper.map(posts, 'post', mapperConfig))
   }, function(e){
     res.status(500).send(e.message)
   })
+})
+
+router.post('/posts', function (req, res) {
+  var data = req.body && req.body.data
+
+  if (data && data.type === 'post') {
+    var attributes = req.body.data.attributes
+
+    models.Post.forge({
+      content: attributes && attributes.content,
+      user_id: req.user.id,
+      bitchingabout: 0
+    })
+    .save()
+    .then(m => m.refresh({ withRelated: ['author'] }))
+    .then(
+      m => res.status(201).send(mapper.map(m, 'post', mapperConfig)),
+      e => res.status(500).send(e.message)
+    )
+  } else {
+    var msg
+    if (!req.body) {
+      msg = 'No body'
+    } else if (!req.body.data) {
+      msg = 'No data for body ' + JSON.stringify(req.body)
+    } else {
+      msg = 'Invalid type ' + req.body.data.type
+    }
+
+    res.status(400).send(msg)
+  }
 })
 
 module.exports = router

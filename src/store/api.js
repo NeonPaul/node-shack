@@ -8,6 +8,7 @@ export default function (url) {
     fetch: function (path, options = {}) {
       var headers = options.headers = options.headers || {}
       headers.Authorization = 'Bearer ' + this.authToken
+      headers['Content-Type'] = 'application/vnd.api+json'
       return window.fetch(url + path, options)
             .then(response => {
               if (response.status >= 400) {

@@ -52,7 +52,9 @@ var store = module.exports = new Vuex.Store({
       state.records = records
     },
     SET_POSTS: (state, payload) =>
-      state.posts = payload
+      state.posts = payload,
+    ADD_POST: (state, payload) =>
+      state.posts.splice(0,0, payload)
   }
 })
 

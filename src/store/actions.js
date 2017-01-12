@@ -33,5 +33,23 @@ export default {
         store.commit('SET_POSTS', response.data.map(post => key(post)))
       }
     )
+  },
+  post: function (store, payload) {
+    api.fetch('/posts', {
+      method: 'POST',
+      body: JSON.stringify({
+        data: {
+          type: 'post',
+          attributes: {
+            content: payload
+          }
+        }
+      })
+    }).then(
+      response => {
+        store.commit('ADD_RECORDS', [response.data])
+        store.commit('ADD_POST', key(response.data))
+      }
+    )
   }
 }
