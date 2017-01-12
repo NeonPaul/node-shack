@@ -3,7 +3,7 @@ export default {
   return new Promise((resolve) => {
     window.fbAsyncInit = function() {
       FB.init({
-        appId      : process.env.FB_APP_ID,
+        appId      : 2363963992,
         xfbml      : true,
         version    : 'v2.8'
       });
@@ -13,7 +13,6 @@ export default {
 
     ;(function(d, s, id){
       if (d.getElementById(id)) {return}
-      console.log('adding script...')
       var js = d.createElement('script')
       js.id = id
       js.src = '//connect.facebook.net/en_US/sdk.js'
