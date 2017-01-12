@@ -1,4 +1,5 @@
 import 'whatwg-fetch'
+import fb from '../fb-api'
 
 export default function (url) {
   return {
@@ -23,6 +24,23 @@ export default function (url) {
         .then(function (json) {
           return json.data
         })
+    },
+    requestTokenFb: function () {
+      return fb.login()
+        .then(result =>
+          window.fetch(url + '/auth/facebook', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(result.authResponse)
+          })
+          .then(response => response.json())
+          .then(response => {
+            this.setToken(response.token)
+            return response.token
+          })
+        )
     },
     requestToken: function (credentials) {
       return window.fetch(url + '/auth', {

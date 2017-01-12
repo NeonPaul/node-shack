@@ -33,8 +33,8 @@ function getUser(email){
 }
 
 function authenticate(token){
-  let decoded = jwt.verify(token, secret);
-  return getUser(decoded.email);
+  let decoded = jwt.verify(token, secret)
+  return getUser(decoded.email)
 }
 
 function getToken(req){
@@ -49,6 +49,33 @@ router.use(bp.json())
 router.use(bp.json({
   type: 'application/vnd.api+json'
 }))
+
+router.post('/auth/facebook', function (req, resp) {
+  var fbToken = req.body.accessToken
+  require('https').get(
+    'https://graph.facebook.com/me?fields=email&access_token=' + fbToken,
+    res => {
+      var body = ''
+      res.on('data', d => {
+        body += d
+      })
+
+      res.on('end', () => {
+        var email = JSON.parse(body).email
+        getUser(email)
+        .then(() => {
+          var token = jwt.sign({ email }, secret)
+          resp.json({ token })
+        })
+        .catch(e => {
+          resp.status(403).json({
+            message: e.message || String(e)
+          })
+        })
+      })
+    }
+  )
+})
 
 router.post('/auth', function(req, res){
   var user = getUser(req.body.email)
@@ -77,7 +104,7 @@ router.post('/auth', function(req, res){
 router.use(function(req, res, next){
   var token = getToken(req)
   if(!token){
-    res.sendStatus(403)
+    res.status(403).json({ message: 'No token provided' })
     return
   }
   var user = authenticate(token)
@@ -87,7 +114,7 @@ router.use(function(req, res, next){
     if(user){
       next()
     }else{
-      res.sendStatus(403)
+      res.status(403).json({message: 'No user found'})
     }
   }, e => {
     res.status(500).send(e.message)

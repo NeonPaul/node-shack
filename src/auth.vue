@@ -24,6 +24,8 @@
         <button type="submit" class="button is-primary">Login</button>
       </p>
     </form>
+    <b>OR</b><br>
+    <a class="button is-secondary" @click="loginFb">Log in with Facebook</a>
   </div>
 </template>
 
@@ -38,6 +40,6 @@ module.exports = {
     }
   },
   computed: mapGetters(['alert']),
-  methods: mapActions(['login'])
+  methods: mapActions(['login', 'loginFb'])
 }
 </script>

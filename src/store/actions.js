@@ -10,11 +10,16 @@ function key (record) {
 export {key}
 
 export default {
+  loginFb: function (store) {
+    return api.requestTokenFb()
+    .then(token => store.dispatch('verifyLogin', token))
+  },
   login: function (store, payload) {
-    api.requestToken(payload)
-    .then(token => {
-      return api.verify(token)
-    })
+    return api.requestToken(payload)
+    .then(token => store.dispatch('verifyLogin', token))
+  },
+  verifyLogin: (store, token) => {
+    return api.verify(token)
     .then(user => {
       store.commit(types.user.SET, user)
       store.dispatch('loadPosts')
