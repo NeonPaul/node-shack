@@ -3,6 +3,18 @@
     <auth v-if="!user" class="column is-half is-offset-one-quarter">
     </auth>
     <div v-else>
+      <nav class="nav">
+        <div class="nav-left">
+          <b class="nav-item">The Glove Shack</b>
+        </div>
+        <div class="nav-right">
+          <div class="nav-item">
+            <a class="button"
+               v-if="notifications"
+               @click="enableNote">Enable notifications</a>
+          </div>
+        </div>
+      </nav>
       <div class="media">
         <figure class="media-left">
           <p class="image is-64x64">
@@ -43,6 +55,9 @@ import SimpleMDE from 'simplemde'
 import Vue from 'vue'
 import 'simplemde/dist/simplemde.min.css'
 import marked from 'marked'
+import serviceWorker from 'file-loader?name=[name].[ext]!./sw.js'
+import urlBase64ToUint8Array from './push-utils'
+import {api} from './store/actions'
 
 export default {
   data() {
@@ -65,12 +80,28 @@ export default {
   components: {
     Auth
   },
-  computed: mapGetters(['user', 'posts']),
+  computed: Object.assign({
+      notifications: () => 'serviceWorker' in navigator && 'showNotification' in ServiceWorkerRegistration.prototype
+    },
+    mapGetters(['user', 'posts'])
+  ),
   methods: Object.assign(
     {
       addPost() {
         this.post(this.mde.value())
         this.mde.value('')
+      },
+      enableNote() {
+        console.log(process.env)
+        navigator.serviceWorker.register(serviceWorker)
+        navigator.serviceWorker.ready.then(
+          registration => registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(process.env.VAPID_PUBLIC)
+          })
+        ).then(
+          subscription => api.createPush(subscription)
+        ).catch(er => console.log(er))
       },
       markdown (content) {
         return marked(content)

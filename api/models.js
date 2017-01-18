@@ -1,3 +1,5 @@
+var webpush = require('./push')
+
 var knex = require('knex')({
   client: 'mysql',
   connection: {
@@ -7,9 +9,9 @@ var knex = require('knex')({
     database : 'shack',
     charset  : 'utf8mb4'
   }
-});
+})
 
-var bookshelf = require('bookshelf')(knex);
+var bookshelf = require('bookshelf')(knex)
 bookshelf.plugin('visibility')
 bookshelf.plugin(require('bookshelf-jsonapi-params'))
 
@@ -23,16 +25,35 @@ var User = bookshelf.Model.extend({
            'profile',
            'status',
            'login']
-});
+})
 
 var Post = bookshelf.Model.extend({
   tableName: 'posts',
   author: function () {
     return this.belongsTo(User)
   }
-});
+})
+
+var Subscription = bookshelf.Model.extend({
+  tableName: 'subscriptions',
+  user: function () {
+    return this.belongsTo(User)
+  }
+})
+
+var Channel = bookshelf.Model.extend({
+  tableName: 'channels',
+  user: function () {
+    return this.belongsTo(User)
+  },
+  push: function (payload) {
+    webpush.sendNotification(JSON.parse(this.get('data')), payload)
+  }
+})
 
 module.exports = {
   User,
-  Post
-};
+  Post,
+  Subscription,
+  Channel
+}

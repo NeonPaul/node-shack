@@ -15,7 +15,9 @@ export default function (url) {
               if (response.status >= 400) {
                 throw new Error('Something bad happened')
               }
-              return response.json()
+              if (response.status !== 204) {
+                return response.json()
+              }
             })
     },
     verify: function (token) {
@@ -61,7 +63,32 @@ export default function (url) {
         this.setToken(response.token)
         return response.token
       })
+    },
+    createPush: function (subscription) {
+      return Promise.all([
+        this.fetch('/channels', {
+          method: 'POST',
+          body: JSON.stringify({
+            data: {
+              type: 'channel',
+              attributes: {
+                data: subscription
+              }
+            }
+          })
+        }),
+        this.fetch('/subscriptions', {
+          method: 'POST',
+          body: JSON.stringify({
+            data: {
+              type: 'subscription',
+              attributes: {
+                type: 'post'
+              }
+            }
+          })
+        })
+      ])
     }
   }
 }
-

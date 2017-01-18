@@ -1,4 +1,5 @@
 var path = require('path')
+var webpack = require('webpack')
 
 module.exports = {
   entry: path.resolve(__dirname, '../src/main.js'),
@@ -26,6 +27,12 @@ module.exports = {
       }
     ]
   },
+
+  plugins: [
+    new webpack.EnvironmentPlugin([
+      'VAPID_PUBLIC'
+    ])
+  ],
 
   vue: {
     loaders: {

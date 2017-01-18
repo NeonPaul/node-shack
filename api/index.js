@@ -1,43 +1,40 @@
-var jwt = require('jsonwebtoken');
-var models = require('./models');
-var PasswordHash = require('phpass').PasswordHash;
-var passwordHash = new PasswordHash();
-var secret = process.env.JWT_SECRET || 'secret';
+var jwt = require('jsonwebtoken')
+var models = require('./models')
+var PasswordHash = require('phpass').PasswordHash
+var passwordHash = new PasswordHash()
+var secret = process.env.JWT_SECRET || 'secret'
 var router = require('express').Router()
 var bp = require('body-parser')
 var Mapper = require('jsonapi-mapper')
 
 var mapper = new Mapper.Bookshelf()
-var mapperConfig =  {
+var mapperConfig = {
   typeForModel: {
     author: 'user',
-    post: 'post'
+    post: 'post',
+    subscription: 'subscription',
+    channel: 'channel'
   }
 }
 
-function parseBody(request){
-  return new Promise(resolve => {
-    var body = [];
-    request.on('data', function(chunk) {
-      body.push(chunk);
-    }).on('end', function() {
-      body = Buffer.concat(body).toString();
-      resolve(body);
-    });
-  });
+var mapError = e => JSON.stringify({
+  errors: [
+    {
+      detail: e.message || String(e)
+    }
+  ]
+})
+
+function getUser (email) {
+  return models.User.where('email', email).fetch()
 }
 
-
-function getUser(email){
-  return models.User.where('email', email).fetch();
-}
-
-function authenticate(token){
+function authenticate (token) {
   let decoded = jwt.verify(token, secret)
   return getUser(decoded.email)
 }
 
-function getToken(req){
+function getToken (req) {
   var token = req.headers.authorization
   token = token && token.match(/Bearer ([^$]+)$/i)
   token = token && token[1] || null
@@ -77,7 +74,7 @@ router.post('/auth/facebook', function (req, resp) {
   )
 })
 
-router.post('/auth', function(req, res){
+router.post('/auth', function (req, res) {
   var user = getUser(req.body.email)
 
   user.then(user => {
@@ -87,33 +84,33 @@ router.post('/auth', function(req, res){
     ])
   }).then(([email, password]) => {
     var success = passwordHash.checkPassword(req.body.password, password)
-    if(success){
+    if (success) {
       var newToken = jwt.sign({ email }, secret)
 
       res.json({ token: newToken })
-    }else{
+    } else {
       res.status(403).json({
         error: 'Wrong username or password.'
       })
     }
-  }, function(e){
+  }, function (e) {
     res.status(500).send(e.message)
   })
 })
 
-router.use(function(req, res, next){
+router.use(function (req, res, next) {
   var token = getToken(req)
-  if(!token){
+  if (!token) {
     res.status(403).json({ message: 'No token provided' })
     return
   }
-  var user = authenticate(token)
+  authenticate(token)
   .then(user => {
     req.user = user
 
-    if(user){
+    if (user) {
       next()
-    }else{
+    } else {
       res.status(403).json({message: 'No user found'})
     }
   }, e => {
@@ -121,55 +118,113 @@ router.use(function(req, res, next){
   })
 })
 
-router.get('/auth', function(req, res){
+router.get('/auth', function (req, res) {
   res.json({
     data: req.user
   })
 })
 
-router.get('/posts', function(req, res){
+router.get('/posts', function (req, res) {
   models.Post.forge().fetchJsonApi({
     page: {
       limit: 50
     },
     sort: ['-time'],
     include: ['author']
-  }).then(function(posts){
+  }).then(function (posts) {
     res.json(mapper.map(posts, 'post', mapperConfig))
-  }, function(e){
+  }, function (e) {
     res.status(500).send(e.message)
   })
 })
 
-router.post('/posts', function (req, res) {
-  var data = req.body && req.body.data
-
-  if (data && data.type === 'post') {
-    var attributes = req.body.data.attributes
-
-    models.Post.forge({
-      content: attributes && attributes.content,
-      user_id: req.user.id,
-      bitchingabout: 0
-    })
-    .save()
-    .then(m => m.refresh({ withRelated: ['author'] }))
-    .then(
-      m => res.status(201).send(mapper.map(m, 'post', mapperConfig)),
-      e => res.status(500).send(e.message)
-    )
-  } else {
-    var msg
-    if (!req.body) {
-      msg = 'No body'
-    } else if (!req.body.data) {
-      msg = 'No data for body ' + JSON.stringify(req.body)
-    } else {
-      msg = 'Invalid type ' + req.body.data.type
-    }
-
-    res.status(400).send(msg)
-  }
+addResource('/posts', {
+  type: 'post',
+  model: models.Post,
+  refreshOpts: { withRelated: ['author'] },
+  values: (attributes, user) => ({
+    content: attributes && attributes.content,
+    user_id: user.id,
+    bitchingabout: 0
+  })
 })
+
+addResource('/subscriptions', {
+  type: 'subscription',
+  model: models.Subscription,
+  values: (attributes, user) => ({
+    type: attributes && attributes.type,
+    user_id: user.id
+  })
+})
+
+var crypto = require('crypto')
+
+function sha256 (data) {
+  return crypto.createHash('sha256').update(data).digest('base64')
+}
+
+addResource('/channels', {
+  type: 'channel',
+  model: models.Channel,
+  values: (attributes, user) => ({
+    data: attributes && JSON.stringify(attributes.data),
+    hash: attributes && sha256(JSON.stringify(attributes.data)),
+    user_id: user.id
+  })
+})
+
+function addResource (url, options = {}) {
+  var values = options.values || function () { return {} }
+  var type = options.type
+  var model = options.model
+  var refreshOpts = options.refreshOpts
+
+  router.post(url, function (req, res) {
+    var data = req.body && req.body.data
+
+    if (data && data.type === type) {
+      var attributes = req.body.data.attributes
+
+      model.forge(values(attributes, req.user))
+      .save()
+      .then(m => m.refresh(refreshOpts))
+      .then(
+        m =>
+          models.Channel.query(qb => {
+            qb.innerJoin('subscriptions', 'channels.user_id', 'subscriptions.user_id')
+            qb.where('subscriptions.type', '=', type)
+            qb.where('subscriptions.user_id', '<>', req.user.id)
+          })
+          .fetchAll()
+          .then(channels => {
+            channels.forEach(channel => channel.push(JSON.stringify(
+              {
+                type: type,
+                action: 'create',
+                id: m.get('id')
+              }
+            )))
+            return m
+          })
+      )
+      .then(
+        m => res.status(201).send(mapper.map(m, type, mapperConfig)),
+        e => res.status(500).send(mapError(e))
+      )
+    } else {
+      var msg
+      if (!req.body) {
+        msg = 'No body'
+      } else if (!req.body.data) {
+        msg = 'No data for body ' + JSON.stringify(req.body)
+      } else {
+        msg = 'Invalid type ' + req.body.data.type
+      }
+
+      res.status(400).send(mapError(msg))
+    }
+  })
+}
 
 module.exports = router
