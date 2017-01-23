@@ -54,6 +54,7 @@ export default {
       })
     }).then(
       response => {
+        store.commit('ADD_RECORDS', response.included)
         store.commit('ADD_RECORDS', [response.data])
         store.commit('ADD_POST', key(response.data))
       }

@@ -26,7 +26,7 @@ var mapError = e => JSON.stringify({
 })
 
 function getUser (email) {
-  return models.User.where('email', email).fetch()
+  return models.User.where('email', email).fetch({ require: true })
 }
 
 function authenticate (token) {
@@ -50,7 +50,7 @@ router.use(bp.json({
 router.post('/auth/facebook', function (req, resp) {
   var fbToken = req.body.accessToken
   require('https').get(
-    'https://graph.facebook.com/me?fields=email&access_token=' + fbToken,
+    'https://graph.facebook.com/me?fields=name,email&access_token=' + fbToken,
     res => {
       var body = ''
       res.on('data', d => {
@@ -58,8 +58,15 @@ router.post('/auth/facebook', function (req, resp) {
       })
 
       res.on('end', () => {
-        var email = JSON.parse(body).email
-        getUser(email)
+        body = JSON.parse(body)
+        var email = body.email
+        getUser(body.email)
+        .catch(() =>
+          models.User.forge({
+            user: body.name,
+            email: body.email
+          }).save()
+        )
         .then(() => {
           var token = jwt.sign({ email }, secret)
           resp.json({ token })
@@ -122,6 +129,15 @@ router.get('/auth', function (req, res) {
   res.json({
     data: req.user
   })
+})
+
+router.put('/password', function (req, res) {
+  var password = passwordHash.hashPassword(req.body.password)
+
+  req.user.set({ password }).save().then(
+    () => res.status(200).json({}),
+    () => res.sendStatus(500)
+  )
 })
 
 router.get('/posts', function (req, res) {

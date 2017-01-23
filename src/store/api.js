@@ -2,9 +2,15 @@ import 'whatwg-fetch'
 import fb from '../fb-api'
 
 export default function (url) {
+  var token = window.localStorage && localStorage.getItem('authToken')
+
   return {
+    authToken: token,
     setToken: function (token) {
       this.authToken = token
+      if (window.localStorage) {
+        localStorage.setItem('authToken', token)
+      }
     },
     fetch: function (path, options = {}) {
       var headers = options.headers = options.headers || {}
@@ -62,6 +68,14 @@ export default function (url) {
       .then(response => {
         this.setToken(response.token)
         return response.token
+      })
+    },
+    changePassword: function (password) {
+      return this.fetch('/password', {
+        method: 'PUT',
+        body: JSON.stringify({
+          password
+        })
       })
     },
     createPush: function (subscription) {

@@ -3,7 +3,7 @@ export default {
   return new Promise((resolve) => {
     window.fbAsyncInit = function() {
       FB.init({
-        appId      : 2363963992,
+        appId      : process.env.FB_APP_ID,
         xfbml      : true,
         version    : 'v2.8'
       });
@@ -30,7 +30,7 @@ export default {
             } else {
               reject(response)
             }
-          }, { scope: 'email' })
+          }, { scope: 'email,public_profile' })
         } else {
           resolve(response)
         }

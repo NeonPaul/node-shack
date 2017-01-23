@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
 import modules from './modules'
-import actions, {key} from './actions'
+import actions, {key, api} from './actions'
 import _ from 'lodash'
 
 Vue.use(Vuex)
@@ -54,8 +54,12 @@ var store = module.exports = new Vuex.Store({
     SET_POSTS: (state, payload) =>
       state.posts = payload,
     ADD_POST: (state, payload) =>
-      state.posts.splice(0,0, payload)
+      state.posts.splice(0, 0, payload)
   }
 })
 
 _.forEach(modules, (value, key) => store.registerModule(key, value))
+
+if (api.authToken) {
+  store.dispatch('verifyLogin', api.authToken)
+}

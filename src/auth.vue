@@ -1,10 +1,18 @@
 <template>
   <div>
-    <h1>Log in</h1>
+    <h1 class="title">Log in</h1>
     <div v-if="alert.message" class="notification" :class="'is-' + alert.type">
       {{ alert.message }}
     </div>
-    <form @submit.prevent="login({ email: email, password: password })">
+    <div class="tabs"><ul>
+      <li>Log in with:
+      <li :class="{'is-active':method==='fb'}">
+        <a @click="method='fb'">Facebook</a></li>
+      <li :class="{'is-active':method==='password'}">
+        <a @click="method='password'">Password</a></li>
+    </ul></div>
+    <form v-if="method==='password'"
+          @submit.prevent="login({ email: email, password: password })">
       <p class="control">
         <input class="input"
                name="email"
@@ -24,8 +32,21 @@
         <button type="submit" class="button is-primary">Login</button>
       </p>
     </form>
-    <b>OR</b><br>
-    <a class="button is-secondary" @click="loginFb">Log in with Facebook</a>
+    <div v-if="method==='fb'"
+         class="columns">
+      <div class="column is-4 is-offset-4">
+        <a @click="loginFb">
+          <div class="card">
+            <div class="card-image">
+              <figure class="image">
+                <img src="https://facebookbrand.com/wp-content/themes/fb-branding/prj-fb-branding/assets/images/fb-art.png">
+              </figure>
+            </div>
+            <div class="card-content">Log in with Facebook</div>
+          </div>
+        </a>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -36,7 +57,8 @@ module.exports = {
   data: function(){
     return {
       email: '',
-      password: ''
+      password: '',
+      method: 'fb'
     }
   },
   computed: mapGetters(['alert']),

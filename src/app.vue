@@ -7,40 +7,53 @@
         <div class="nav-left">
           <b class="nav-item">The Glove Shack</b>
         </div>
-        <div class="nav-right">
+        <div class="nav-right nav-menu" :class="{'is-active': navActive}">
           <div class="nav-item">
             <a class="button"
                v-if="notifications"
                @click="enableNote">Enable notifications</a>
           </div>
-        </div>
-      </nav>
-      <div class="media">
-        <figure class="media-left">
-          <p class="image is-64x64">
-            <img :src="user.avatar">
-          </p>
-        </figure>
-        <div class="media-content">
-          <strong>{{ user.user }}</strong>
-          <textarea></textarea>
-          <div>
-            <a class="button is-primary is-medium"
-               @click="addPost">Post</a>
+          <div class="nav-item">
+            <p class="control has-addons">
+              <input class="input " type="password" v-model="newPassword">
+              <a class="button" @click="changePassword">Change password</a>
+            </p>
           </div>
         </div>
-      </div>
-      <div v-for="post in posts" class="media">
-        <figure class="media-left">
-          <p class="image is-64x64">
-            <img v-if="post.author" :src="post.author.avatar">
-          </p>
-        </figure>
-        <div class="media-content">
-          <div class="content">
-            <strong>{{ post.author && post.author.user }}</strong><br>
-            <span v-html="markdown(post.content)"
-                  class="content box"></span>
+        <span class="nav-toggle" @click="navActive = true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </nav>
+      <div class="container">
+        <div class="media">
+          <figure class="media-left">
+            <p class="image is-64x64">
+              <img :src="user.avatar">
+            </p>
+          </figure>
+          <div class="media-content">
+            <strong>{{ user.user }}</strong>
+            <textarea></textarea>
+            <div>
+              <a class="button is-primary is-medium"
+                 @click="addPost">Post</a>
+            </div>
+          </div>
+        </div>
+        <div v-for="post in posts" class="media">
+          <figure class="media-left">
+            <p class="image is-64x64">
+              <img v-if="post.author" :src="post.author.avatar">
+            </p>
+          </figure>
+          <div class="media-content">
+            <div class="content">
+              <strong>{{ post.author && post.author.user }}</strong><br>
+              <span v-html="markdown(post.content)"
+                    class="content box"></span>
+            </div>
           </div>
         </div>
       </div>
@@ -61,7 +74,11 @@ import {api} from './store/actions'
 
 export default {
   data() {
-    return { mde: null }
+    return {
+      mde: null,
+      newPassword: '',
+      navActive: false
+    }
   },
   watch: {
     user(u) {
@@ -90,6 +107,16 @@ export default {
       addPost() {
         this.post(this.mde.value())
         this.mde.value('')
+      },
+      changePassword() {
+        if (this.newPassword) {
+          api.changePassword(this.newPassword)
+            .then(
+              () => alert('Password changed'),
+              () => alert('Password could not be changed')
+            )
+          this.newPassword = ''
+        }
       },
       enableNote() {
         console.log(process.env)

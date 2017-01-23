@@ -30,7 +30,8 @@ module.exports = {
 
   plugins: [
     new webpack.EnvironmentPlugin([
-      'VAPID_PUBLIC'
+      'VAPID_PUBLIC',
+      'FB_APP_ID'
     ])
   ],
 
