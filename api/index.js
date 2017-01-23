@@ -62,9 +62,9 @@ router.post('/auth/facebook', function (req, resp) {
         var email = body.email
         if (!email) {
           return resp.status(400)
-            .send('Couldn\'t get your email from facebook. Please make sure ' +
+            .json('"Couldn\'t get your email from facebook. Please make sure ' +
                  'your email is registered with facebook and available to ' +
-                 'the glove shack login app.')
+                 'the glove shack login app."')
         }
         getUser(body.email)
         .catch(() =>
