@@ -1,6 +1,19 @@
 import 'whatwg-fetch'
 import fb from '../fb-api'
 
+function processFetch (response) {
+  if (response.status >= 400) {
+    return response.text().catch(
+      () => 'HTTP status ' + response.status
+    ).then(
+      text => { throw new Error(text) }
+    )
+  }
+  if (response.status !== 204) {
+    return response.json()
+  }
+}
+
 export default function (url) {
   var token = window.localStorage && localStorage.getItem('authToken')
 
@@ -17,14 +30,7 @@ export default function (url) {
       headers.Authorization = 'Bearer ' + this.authToken
       headers['Content-Type'] = 'application/vnd.api+json'
       return window.fetch(url + path, options)
-            .then(response => {
-              if (response.status >= 400) {
-                throw new Error('Something bad happened')
-              }
-              if (response.status !== 204) {
-                return response.json()
-              }
-            })
+          .then(processFetch)
     },
     verify: function (token) {
       this.setToken(token)
@@ -58,13 +64,7 @@ export default function (url) {
         },
         body: JSON.stringify(credentials)
       })
-      .then(function (response) {
-        if (response.status >= 400) {
-          throw new Error('Something bad happened')
-        }
-
-        return response.json()
-      })
+      .then(processFetch)
       .then(response => {
         this.setToken(response.token)
         return response.token

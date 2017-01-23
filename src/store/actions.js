@@ -15,6 +15,9 @@ export default {
   loginFb: function (store) {
     return api.requestTokenFb()
     .then(token => store.dispatch('verifyLogin', token))
+    .catch(e => {
+      store.commit(types.alert.ERROR, String(e) || 'Could not log in via facebook.')
+    })
   },
   login: function (store, payload) {
     return api.requestToken(payload)
