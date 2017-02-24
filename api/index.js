@@ -131,6 +131,8 @@ router.use(function (req, res, next) {
   })
 })
 
+router.use('/dump', require('./dump'))
+
 router.get('/auth', function (req, res) {
   res.json({
     data: req.user
