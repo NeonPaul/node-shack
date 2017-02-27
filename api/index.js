@@ -7,6 +7,12 @@ var router = require('express').Router()
 var bp = require('body-parser')
 var Mapper = require('jsonapi-mapper')
 
+router.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With')
+  next()
+})
+
 var mapper = new Mapper.Bookshelf()
 var mapperConfig = {
   typeForModel: {
