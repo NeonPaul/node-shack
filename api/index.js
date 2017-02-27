@@ -9,8 +9,12 @@ var Mapper = require('jsonapi-mapper')
 
 router.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With')
-  next()
+  res.header('Access-Control-Allow-Headers', 'Content-Type')
+  if (req.method === 'OPTIONS') {
+    res.send()
+  } else {
+    next()
+  }
 })
 
 var mapper = new Mapper.Bookshelf()
