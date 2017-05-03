@@ -35,7 +35,7 @@
           </figure>
           <div class="media-content">
             <strong>{{ user.user }}</strong>
-            <textarea></textarea>
+            <editor v-model='newPost'></editor>
             <div>
               <a class="button is-primary is-medium"
                  @click="addPost">Post</a>
@@ -53,6 +53,7 @@
               <strong>{{ post.author && post.author.user }}</strong><br>
               <span v-html="markdown(post.content)"
                     class="content box"></span>
+              <span>{{ post.user_id === user.id ? 'Owner': '' }}</span>
             </div>
           </div>
         </div>
@@ -64,38 +65,25 @@
 <script>
 import Auth from './auth.vue'
 import {mapGetters, mapActions} from 'vuex'
-import SimpleMDE from 'simplemde'
 import Vue from 'vue'
-import 'simplemde/dist/simplemde.min.css'
 import marked from 'marked'
 import serviceWorker from 'file-loader?name=[name].[ext]!./sw.js'
 import urlBase64ToUint8Array from './push-utils'
 import {api} from './store/actions'
+import Editor from './components/Editor'
 
 export default {
   data() {
     return {
       mde: null,
       newPassword: '',
-      navActive: false
-    }
-  },
-  watch: {
-    user(u) {
-      if (u) {
-        Vue.nextTick(() => {
-          this.mde = new SimpleMDE({
-            autosave: true,
-            autofocus: true,
-            indentWithTabs: false,
-            status: false
-          })
-        })
-      }
+      navActive: false,
+      newPost: ''
     }
   },
   components: {
-    Auth
+    Auth,
+    Editor
   },
   computed: Object.assign({
       notifications: () => 'serviceWorker' in navigator && 'showNotification' in ServiceWorkerRegistration.prototype
@@ -105,8 +93,8 @@ export default {
   methods: Object.assign(
     {
       addPost() {
-        this.post(this.mde.value())
-        this.mde.value('')
+        this.post(this.newPost)
+        this.newPost = ''
       },
       changePassword() {
         if (this.newPassword) {

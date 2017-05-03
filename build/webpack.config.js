@@ -10,7 +10,8 @@ module.exports = {
   resolve: {
     alias: {
       vue: 'vue/dist/vue'
-    }
+    },
+    extensions: ["", ".webpack.js", ".web.js", ".js", ".json", '.vue']
   },
   module: {
     loaders: [
