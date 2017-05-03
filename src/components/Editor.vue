@@ -1,5 +1,7 @@
 <template>
-  <textarea>{{value}}</textarea>
+  <span>
+    <textarea>{{value}}</textarea>
+  </span>
 </template>
 
 <script>
@@ -19,7 +21,7 @@ export default {
 
   mounted() {
     this.mde = new SimpleMDE({
-      element: this.$el,
+      element: this.$el.querySelector('textarea'),
       autosave: true,
       autofocus: true,
       indentWithTabs: false,

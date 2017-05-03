@@ -44,6 +44,16 @@ export default {
       }
     )
   },
+  postEdit: function (store, payload) {
+    api.update('post')
+      .set('content', payload.content)
+      .on(payload.id)()
+      .then(
+        record => {
+          store.commit('ADD_RECORDS', [record])
+        }
+      )
+  },
   post: function (store, payload) {
     api.fetch('/posts', {
       method: 'POST',

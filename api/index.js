@@ -261,4 +261,61 @@ function addResource (url, options = {}) {
   })
 }
 
+const RecordNotFound = 404
+const Ok = payload => ({
+  type: Ok,
+  payload
+})
+const MiscError = 500
+const NotAuthorized = 401
+
+function expressOutput(res) {
+  return function(message) {
+    if (typeof message === 'number') {
+      res.sendStatus(message)
+    } else {
+      switch (message.type){
+        case Ok:
+          res.send(200, message.payload)
+      }
+    }
+  }
+}
+
+function expressInput(req) {
+  return req.body
+}
+
+function jsonApiInput(body) {
+  return body.data.attributes
+}
+
+function editPost(id, { content }) {
+  return function(user) {
+    return function(output) {
+      models.Post.where('id', id).fetch({ require: true }).then(post => {
+        if (post.get('user_id') !== user.get('id')) {
+          console.log(post.get('user_id'), user.get('id'))
+          return output(NotAuthorized)
+        }
+        post.set({ content }).save().then(
+          m => m.refresh({ withRelated: ['author'] })
+        ).then(
+          m => output(Ok(mapper.map(m, 'post', mapperConfig))),
+          () => output(MiscError)
+        )
+      }, e => {
+        output(RecordNotFound)
+      })
+    }
+  }
+}
+
+router.post('/post/:id', (req, res) => {
+  var output = expressOutput(res)
+  var input = jsonApiInput(expressInput(req))
+  var edit = editPost(req.param('id'), input)
+  edit(req.user)(output)
+})
+
 module.exports = router

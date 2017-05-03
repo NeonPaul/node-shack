@@ -103,6 +103,44 @@ export default function (url) {
           })
         })
       ])
+    },
+
+    update(model) {
+      var id
+      var attributes = {}
+      var exec = Object.assign(
+        () => this.fetch(
+          '/' + model + '/' + id,
+          {
+            method: 'POST',
+            body: JSON.stringify({
+              data: {
+                type: model,
+                attributes
+              }
+            })
+          }
+        ).then(
+          response => response.data
+        ),
+        {
+          set(attrs, value) {
+            if(typeof attrs !== 'object') {
+               attrs = {
+                 [attrs]: value
+               }
+            }
+            Object.assign(attributes, attrs)
+            return exec
+          },
+
+          on(onId) {
+            id = onId
+            return exec
+          }
+        }
+      )
+      return exec
     }
   }
 }

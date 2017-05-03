@@ -42,21 +42,11 @@
             </div>
           </div>
         </div>
-        <div v-for="post in posts" class="media">
-          <figure class="media-left">
-            <p class="image is-64x64">
-              <img v-if="post.author" :src="post.author.avatar">
-            </p>
-          </figure>
-          <div class="media-content">
-            <div class="content">
-              <strong>{{ post.author && post.author.user }}</strong><br>
-              <span v-html="markdown(post.content)"
-                    class="content box"></span>
-              <span>{{ post.user_id === user.id ? 'Owner': '' }}</span>
-            </div>
-          </div>
-        </div>
+        <post v-for="post in posts"
+              :post="post"
+              :editable="post.user_id === user.id"
+              @edit="editPost(post.id, $event)">
+        </post>
       </div>
     </div>
   </div>
@@ -66,16 +56,15 @@
 import Auth from './auth.vue'
 import {mapGetters, mapActions} from 'vuex'
 import Vue from 'vue'
-import marked from 'marked'
 import serviceWorker from 'file-loader?name=[name].[ext]!./sw.js'
 import urlBase64ToUint8Array from './push-utils'
 import {api} from './store/actions'
 import Editor from './components/Editor'
+import Post from './components/Post'
 
 export default {
   data() {
     return {
-      mde: null,
       newPassword: '',
       navActive: false,
       newPost: ''
@@ -83,7 +72,8 @@ export default {
   },
   components: {
     Auth,
-    Editor
+    Editor,
+    Post
   },
   computed: Object.assign({
       notifications: () => 'serviceWorker' in navigator && 'showNotification' in ServiceWorkerRegistration.prototype
@@ -95,6 +85,11 @@ export default {
       addPost() {
         this.post(this.newPost)
         this.newPost = ''
+      },
+      editPost(id, content) {
+        this.postEdit({
+          id, content
+        })
       },
       changePassword() {
         if (this.newPassword) {
@@ -117,12 +112,9 @@ export default {
         ).then(
           subscription => api.createPush(subscription)
         ).catch(er => console.log(er))
-      },
-      markdown (content) {
-        return marked(content)
       }
     },
-    mapActions(['loadPosts', 'post'])
+    mapActions(['loadPosts', 'post', 'postEdit'])
   )
 }
 </script>
