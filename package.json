@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node --use_strict start.js",
     "webpack": "node ./build/build.js",
-    "keygen": "node -e \"console.log(require('web-push').generateVAPIDKeys())\""
+    "keygen": "node -e \"console.log(require('web-push').generateVAPIDKeys())\"",
+    "pwgen": "node -e \"console.log(process.argv[1], new (require('phpass').PasswordHash)().hashPassword(process.argv[1]))\""
   },
   "author": "Ionut-Cristian Florescu <ionut.florescu@gmail.com>",
   "license": "ISC",
