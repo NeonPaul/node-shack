@@ -8,14 +8,16 @@
   <div class="media-content">
     <div class="content">
       <strong>{{ post.author && post.author.user }}</strong><br>
-      <div v-if="!editing">
-        <div v-html="contentHtml"
-              class="content box"></div>
-        <button v-if="editable" @click='edit()'>Edit</button>
+      <div v-if="!editing" class="content box">
+        <div v-html="contentHtml"></div>
+        <button v-if="editable"
+                @click='edit()'
+                class="button is-small">Edit</button>
       </div>
       <div v-else>
         <editor v-model='newContent'></editor>
-        <button @click='submitEdit'>Ok</button>
+        <button @click='submitEdit'
+                class="button is-primary">Save</button>
       </div>
     </div>
   </div>
@@ -32,7 +34,7 @@ export default {
   components: {
     Editor
   },
-  
+
   data : () => ({
     editing: false,
     newContent: ''
