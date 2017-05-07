@@ -2,10 +2,13 @@ var path = require('path')
 var webpack = require('webpack')
 
 module.exports = {
-  entry: path.resolve(__dirname, '../src/main.js'),
+  entry: {
+    'app.bundle': path.resolve(__dirname, '../src/main.js'),
+    sw: path.resolve(__dirname, '../src/sw.js')
+  },
   output: {
     path: path.resolve(__dirname, '../static'),
-    filename: 'app.bundle.js'
+    filename: '[name].js'
   },
   resolve: {
     alias: {

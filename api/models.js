@@ -47,7 +47,7 @@ var Channel = bookshelf.Model.extend({
     return this.belongsTo(User)
   },
   push: function (payload) {
-    webpush.sendNotification(JSON.parse(this.get('data')), payload)
+    return webpush.sendNotification(JSON.parse(this.get('data')), payload)
   }
 })
 

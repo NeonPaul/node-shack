@@ -1,9 +1,5 @@
-import Api from './api'
+import {api} from '../api'
 import {types} from './modules'
-
-var api = Api('/api')
-
-export {api}
 
 function key (record) {
   return record.type + record.id

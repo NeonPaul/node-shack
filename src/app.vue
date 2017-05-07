@@ -9,9 +9,7 @@
         </div>
         <div class="nav-right nav-menu" :class="{'is-active': navActive}">
           <div class="nav-item">
-            <a class="button"
-               v-if="notifications"
-               @click="enableNote">Enable notifications</a>
+            <notifications></notifications>
           </div>
           <div class="nav-item">
             <p class="control has-addons">
@@ -56,11 +54,10 @@
 import Auth from './auth.vue'
 import {mapGetters, mapActions} from 'vuex'
 import Vue from 'vue'
-import serviceWorker from 'file-loader?name=[name].[ext]!./sw.js'
-import urlBase64ToUint8Array from './push-utils'
-import {api} from './store/actions'
+import {notifications, api} from './api'
 import Editor from './components/Editor'
 import Post from './components/Post'
+import Notifications from './components/Notifications'
 
 export default {
   data() {
@@ -73,13 +70,10 @@ export default {
   components: {
     Auth,
     Editor,
-    Post
+    Post,
+    Notifications
   },
-  computed: Object.assign({
-      notifications: () => 'serviceWorker' in navigator && 'showNotification' in ServiceWorkerRegistration.prototype
-    },
-    mapGetters(['user', 'posts'])
-  ),
+  computed: mapGetters(['user', 'posts']),
   methods: Object.assign(
     {
       addPost() {
@@ -100,18 +94,6 @@ export default {
             )
           this.newPassword = ''
         }
-      },
-      enableNote() {
-        console.log(process.env)
-        navigator.serviceWorker.register(serviceWorker)
-        navigator.serviceWorker.ready.then(
-          registration => registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(process.env.VAPID_PUBLIC)
-          })
-        ).then(
-          subscription => api.createPush(subscription)
-        ).catch(er => console.log(er))
       }
     },
     mapActions(['loadPosts', 'post', 'postEdit'])

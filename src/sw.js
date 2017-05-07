@@ -1,6 +1,14 @@
 /*global self, clients*/
+import {notifications, api} from './api'
+
 self.addEventListener('push', event => {
   event.waitUntil(self.registration.showNotification('New Gloveshack Post'))
+})
+
+self.addEventListener('pushsubscriptionchange', event => {
+  event.waitUntil(
+    notifications.subscribe().then(sub => api.createPush(sub))
+  )
 })
 
 self.addEventListener('notificationclick', event => {

@@ -232,13 +232,17 @@ function addResource (url, options = {}) {
           })
           .fetchAll()
           .then(channels => {
-            channels.forEach(channel => channel.push(JSON.stringify(
-              {
-                type: type,
-                action: 'create',
-                id: m.get('id')
-              }
-            )))
+            channels.forEach(channel =>
+              channel.push(JSON.stringify(
+                {
+                  type: type,
+                  action: 'create',
+                  id: m.get('id')
+                }
+              )).catch(e => {
+                channel.destroy()
+              })
+            )
             return m
           })
       )
@@ -295,7 +299,6 @@ function editPost(id, { content }) {
     return function(output) {
       models.Post.where('id', id).fetch({ require: true }).then(post => {
         if (post.get('user_id') !== user.get('id')) {
-          console.log(post.get('user_id'), user.get('id'))
           return output(NotAuthorized)
         }
         post.set({ content }).save().then(

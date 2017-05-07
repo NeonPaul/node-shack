@@ -15,13 +15,14 @@ function processFetch (response) {
 }
 
 export default function (url) {
-  var token = window.localStorage && localStorage.getItem('authToken')
+  var localStorage = (typeof localStorage !== 'undefined') && localStorage
+  var token = localStorage  && localStorage.getItem('authToken')
 
   return {
     authToken: token,
     setToken: function (token) {
       this.authToken = token
-      if (window.localStorage) {
+      if (localStorage) {
         localStorage.setItem('authToken', token)
       }
     },
@@ -29,7 +30,7 @@ export default function (url) {
       var headers = options.headers = options.headers || {}
       headers.Authorization = 'Bearer ' + this.authToken
       headers['Content-Type'] = 'application/vnd.api+json'
-      return window.fetch(url + path, options)
+      return fetch(url + path, options)
           .then(processFetch)
     },
     verify: function (token) {

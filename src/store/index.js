@@ -1,7 +1,8 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
 import modules from './modules'
-import actions, {key, api} from './actions'
+import actions, {key} from './actions'
+import {api} from '../api'
 import _ from 'lodash'
 
 Vue.use(Vuex)
