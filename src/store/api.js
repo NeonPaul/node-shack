@@ -15,7 +15,7 @@ function processFetch (response) {
 }
 
 export default function (url) {
-  var localStorage = (typeof localStorage !== 'undefined') && localStorage
+  var localStorage = (typeof window !== 'undefined') && window.localStorage
   var token = localStorage  && localStorage.getItem('authToken')
 
   return {
