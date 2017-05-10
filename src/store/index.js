@@ -1,66 +1,51 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
 import modules from './modules'
-import actions, {key} from './actions'
-import {api} from '../api'
+import actions from './actions'
+import { api } from '../api'
 import _ from 'lodash'
+import expand from './expand'
+
+function getKey(record) {
+  return record.type + record.id
+}
 
 Vue.use(Vuex)
 
-function to (items, mapper) {
-  if (Array.isArray(items)) {
-    return items.map(mapper)
-  }
-
-  if (items) {
-    return mapper(items)
-  }
-}
-
-function expand (record, records) {
-  var linked = _.mapValues(
-    record.relationships,
-    rel => to(
-      rel.data,
-      link => expand(records[key(link)], records)
-    )
-  )
-
-  return Object.assign({
-       id: record.id,
-       type: record.type
-      },
-      record.attributes,
-      linked
-    )
-}
-
-var store = module.exports = new Vuex.Store({
+var store = (module.exports = new Vuex.Store({
   actions,
   state: {
     records: {},
     posts: []
   },
   getters: {
-    posts: state => state.posts.map(
-      post => expand(state.records[post], state.records)
-    )
+    posts: state => state.posts.map(hydrate)
   },
   mutations: {
     ADD_RECORDS: (state, payload) => {
       var records = Object.assign({}, state.records)
-      payload.forEach(record => records[key(record)] = record)
+      payload.forEach(record => (records[getKey(record)] = record))
       state.records = records
     },
-    SET_POSTS: (state, payload) =>
-      state.posts = payload,
-    ADD_POST: (state, payload) =>
-      state.posts.splice(0, 0, payload)
+    SET_POSTS: (state, payload) => (state.posts = payload),
+    ADD_POST: (state, payload) => state.posts.splice(0, 0, payload)
   }
-})
+}))
+
+var hydrate = expand(getKey, key => store.state.records[key])
 
 _.forEach(modules, (value, key) => store.registerModule(key, value))
+_.forEach(jsonModules, (value, key) =>
+  store.registerModule(key, value(getKey, hydrage))
+)
 
 if (api.authToken) {
   store.dispatch('verifyLogin', api.authToken)
 }
+
+navigator.serviceWorker &&
+  navigator.serviceWorker.addEventListener('message', () =>
+    store.dispatch('loadPosts')
+  )
+
+export { hydrate, getKey }

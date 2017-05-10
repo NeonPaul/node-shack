@@ -3,11 +3,11 @@ var webpush = require('./push')
 var knex = require('knex')({
   client: 'mysql',
   connection: {
-    host     : process.env.OPENSHIFT_MYSQL_DB_HOST,
-    user     : process.env.DB_USER,
-    password : process.env.DB_PASS,
-    database : 'shack',
-    charset  : 'utf8mb4'
+    host: process.env.OPENSHIFT_MYSQL_DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: 'shack',
+    charset: 'utf8mb4'
   }
 })
 
@@ -17,43 +17,60 @@ bookshelf.plugin(require('bookshelf-jsonapi-params'))
 
 var User = bookshelf.Model.extend({
   tableName: 'users',
-  hidden: ['password',
-           'passwd',
-           'auth_type',
-           'money',
-           'u_status',
-           'profile',
-           'status',
-           'login']
+  hidden: [
+    'password',
+    'passwd',
+    'auth_type',
+    'money',
+    'u_status',
+    'profile',
+    'status',
+    'login'
+  ]
 })
 
 var Post = bookshelf.Model.extend({
   tableName: 'posts',
-  author: function () {
+  author: function() {
     return this.belongsTo(User)
+  },
+  reactions: function() {
+    return this.hasMany(Reaction)
   }
 })
 
 var Subscription = bookshelf.Model.extend({
   tableName: 'subscriptions',
-  user: function () {
+  user: function() {
     return this.belongsTo(User)
   }
 })
 
 var Channel = bookshelf.Model.extend({
   tableName: 'channels',
-  user: function () {
+  user: function() {
     return this.belongsTo(User)
   },
-  push: function (payload) {
+  push: function(payload) {
     return webpush.sendNotification(JSON.parse(this.get('data')), payload)
   }
+})
+
+var Reaction = bookshelf.Model.extend({
+  tableName: 'response',
+  type: function() {
+    return this.belongsTo(ReactionType, 'type')
+  }
+})
+
+var ReactionType = bookshelf.Model.extend({
+  tableName: 'response_type'
 })
 
 module.exports = {
   User,
   Post,
   Subscription,
-  Channel
+  Channel,
+  Reaction
 }

@@ -1,0 +1,9 @@
+{
+  "rules":
+  {
+    "max-len": [1, 80],
+    "indent": [2, 2],
+    "quotes": [2, "single"],
+    "semi": [2, "never"]
+  }
+}

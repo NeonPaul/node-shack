@@ -1,5 +1,6 @@
 import basic from './basic'
 import alert from './alert'
+import jsonapi from './jsonapi'
 import _ from 'lodash'
 
 var modules = {
@@ -7,5 +8,13 @@ var modules = {
   alert
 }
 
+var jsonModules = {
+  reactionTypes: jsonapi('reactionTypes')
+}
+
 export default modules
-export var types = _.mapValues(modules, 'types')
+export { jsonModules }
+export var types = Object.assign(
+  _.mapValues(modules, 'types'),
+  _.mapValues(jsonModules, 'types')
+)
