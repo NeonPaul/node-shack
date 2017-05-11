@@ -9,21 +9,23 @@ function onEach(items, mapper) {
 }
 
 export default function(getKey, getRecord) {
-  function expand(getKey) {
-    return record => {
-      var linked = _.mapValues(record.relationships, rel =>
-        onEach(rel.data, link => hydrate(getKey(link)))
-      )
-
-      return Object.assign(
-        {
-          id: record.id,
-          type: record.type
-        },
-        record.attributes,
-        linked
-      )
+  function expand(record) {
+    if (!record) {
+      return record
     }
+
+    var linked = _.mapValues(record.relationships, rel =>
+      onEach(rel.data, link => hydrate(getKey(link)))
+    )
+
+    return Object.assign(
+      {
+        id: record.id,
+        type: record.type
+      },
+      record.attributes,
+      linked
+    )
   }
 
   const hydrate = key => expand(getRecord(key))

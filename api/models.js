@@ -59,7 +59,13 @@ var Channel = bookshelf.Model.extend({
 var Reaction = bookshelf.Model.extend({
   tableName: 'response',
   type: function() {
-    return this.belongsTo(ReactionType, 'type')
+    return this.belongsTo(ReactionType, 'response_type_id')
+  },
+  post: function() {
+    return this.belongsTo(Post)
+  },
+  user: function() {
+    return this.belongsTo(User)
   }
 })
 
@@ -72,5 +78,6 @@ module.exports = {
   Post,
   Subscription,
   Channel,
-  Reaction
+  Reaction,
+  ReactionType
 }

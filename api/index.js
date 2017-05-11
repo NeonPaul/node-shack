@@ -25,7 +25,8 @@ var mapperConfig = {
     subscription: 'subscription',
     channel: 'channel',
     reaction: 'reaction',
-    type: 'reaction-type'
+    type: 'reaction-type',
+    'reaction-type': 'reaction-type'
   }
 }
 
@@ -182,7 +183,7 @@ router.get('/posts', function(req, res) {
         limit: 50
       },
       sort: ['-time'],
-      include: ['author']
+      include: ['author', 'reactions', 'reactions.user', 'reactions.type']
     })
     .then(
       function(posts) {
@@ -197,7 +198,7 @@ router.get('/posts', function(req, res) {
 addResource('/posts', {
   type: 'post',
   model: models.Post,
-  refreshOpts: { withRelated: ['author'] },
+  refreshOpts: { withRelated: ['author', 'reactions'] },
   values: (attributes, user) => ({
     content: attributes && attributes.content,
     user_id: user.id,
@@ -369,13 +370,22 @@ function addReaction(postId, { type }) {
         .fetch()
         .then(model => {
           if (!model) {
-            model = Post.forge(key)
+            model = models.Reaction.forge(key)
           }
           return model.save({
-            type
+            response_type_id: type
           })
         })
-        .then(m => m.refresh())
+        .then(m =>
+          m.refresh({
+            withRelated: [
+              'post',
+              'post.reactions',
+              'post.reactions.user',
+              'post.reactions.type'
+            ]
+          })
+        )
         .then(
           m => output(Ok(mapper.map(m, 'reaction', mapperConfig))),
           e => output(MiscError(e.message || String(e)))
@@ -384,10 +394,13 @@ function addReaction(postId, { type }) {
   }
 }
 
-function readReactionTypes() {
+function readReactionTypes(output) {
   models.ReactionType
-    .fetch()
-    .then(models => output(Ok(mapper.map(m, 'reaction-type', mapperConfig))))
+    .fetchAll()
+    .then(models =>
+      output(Ok(mapper.map(models, 'reaction-type', mapperConfig)))
+    )
+    .catch(error => output(MiscError(e.message || String(e))))
 }
 
 router.post('/post/:id', (req, res) => {
@@ -397,7 +410,7 @@ router.post('/post/:id', (req, res) => {
   edit(req.user)(output)
 })
 
-router.post('/post/:id/react', (req, res) => {
+router.post('/post/:id/reaction', (req, res) => {
   var output = expressOutput(res)
   var input = jsonApiInput(expressInput(req))
   var edit = addReaction(req.param('id'), input)
@@ -406,8 +419,8 @@ router.post('/post/:id/react', (req, res) => {
 
 router.get('/reaction-types', (req, res) => {
   var output = expressOutput(res)
-  var read = readReactionTypes()
-  read(req.user)(output)
+  var read = readReactionTypes
+  read(output)
 })
 
 module.exports = router

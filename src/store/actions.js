@@ -48,7 +48,15 @@ export default {
       .set('content', payload.content)
       .on(payload.id)()
       .then(record => {
-        store.commit('ADD_RECORDS', [record])
+        store.commit('ADD_RECORDS', [record.data])
+      })
+  },
+  addReaction: function(store, { postId, type }) {
+    api
+      .create('post/' + postId + '/reaction')
+      .with({ postId, type })()
+      .then(record => {
+        store.commit('ADD_RECORDS', [record.data, ...record.included])
       })
   },
   post: function(store, payload) {
@@ -70,7 +78,7 @@ export default {
         store.commit('ADD_POST', key(response.data))
       })
   },
-  loadReactionTypes() {
+  loadReactionTypes(store) {
     api.fetch('/reaction-types').then(response => {
       store.commit('ADD_RECORDS', response.data)
       store.commit(types.reactionTypes.SET, response.data)

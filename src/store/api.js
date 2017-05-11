@@ -99,7 +99,7 @@ export default function(url) {
             attributes: payload
           }
         })
-      }).then(response => response.data)
+      })
     },
 
     create(model) {

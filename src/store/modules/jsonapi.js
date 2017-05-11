@@ -1,9 +1,9 @@
 export default function(namespace) {
-  return (getKey, getRecord) => {
-    var types = {
-      SET: namespace + ':SET'
-    }
+  var types = {
+    SET: namespace + ':SET'
+  }
 
+  var fn = (getKey, getRecord) => {
     return {
       types,
       state: [],
@@ -12,9 +12,13 @@ export default function(namespace) {
       },
       mutations: {
         [types.SET]: function(state, records) {
-          state.splice(0, Infinity, records)
+          state.splice(0, Infinity, records.map(getKey))
         }
       }
     }
   }
+
+  fn.types = types
+
+  return fn
 }

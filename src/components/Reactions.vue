@@ -14,12 +14,15 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   props: ['postId', 'reactions'],
 
-  methods: Object.assign({
-    react(type) {
-      this.addReaction(this.postId, type.id)
-    }
-  },
-  mapActions(['addReaction']))
+  methods: Object.assign(
+    {
+      react(type) {
+        this.addReaction({ postId: this.postId, type: type.id })
+      }
+    },
+    mapActions(['addReaction'])
+  ),
+
   computed: mapGetters(['reactionTypes'])
 }
 </script>

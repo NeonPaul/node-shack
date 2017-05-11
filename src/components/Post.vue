@@ -2,7 +2,7 @@
 <div class="media">
   <figure class="media-left">
     <p class="image is-64x64">
-      <img v-if="post.author" :src="post.author.avatar">
+      <img v-if="post.author && post.author.avatar" :src="post.author.avatar">
     </p>
   </figure>
   <div class="media-content">
@@ -13,6 +13,8 @@
         <button v-if="editable"
                 @click='edit()'
                 class="button is-small">Edit</button>
+        <reactions :post-id="post.id"
+                   :reactions="post.reactions"></reactions>
       </div>
       <div v-else>
         <editor v-model='newContent'></editor>
@@ -29,10 +31,12 @@ import SimpleMDE from 'simplemde'
 import 'simplemde/dist/simplemde.min.css'
 import marked from 'marked'
 import Editor from './Editor'
+import Reactions from './Reactions'
 
 export default {
   components: {
-    Editor
+    Editor,
+    Reactions
   },
 
   data : () => ({

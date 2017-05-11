@@ -1,6 +1,6 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
-import modules from './modules'
+import modules, { jsonModules } from './modules'
 import actions from './actions'
 import { api } from '../api'
 import _ from 'lodash'
@@ -19,7 +19,9 @@ var store = (module.exports = new Vuex.Store({
     posts: []
   },
   getters: {
-    posts: state => state.posts.map(hydrate)
+    posts: state => {
+      return state.posts.map(hydrate)
+    }
   },
   mutations: {
     ADD_RECORDS: (state, payload) => {
@@ -36,7 +38,7 @@ var hydrate = expand(getKey, key => store.state.records[key])
 
 _.forEach(modules, (value, key) => store.registerModule(key, value))
 _.forEach(jsonModules, (value, key) =>
-  store.registerModule(key, value(getKey, hydrage))
+  store.registerModule(key, value(getKey, hydrate))
 )
 
 if (api.authToken) {
