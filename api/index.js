@@ -7,6 +7,14 @@ var router = require('express').Router()
 var bp = require('body-parser')
 var Mapper = require('jsonapi-mapper')
 
+var reactionEmoji = {
+  Like: '👍',
+  Dislike: '👎',
+  Agree: '🈴',
+  Judge: '😒',
+  L: '👍'
+}
+
 router.use(function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization')
@@ -380,6 +388,7 @@ function addReaction(postId, { type }) {
           m.refresh({
             withRelated: [
               'post',
+              'post.author',
               'post.reactions',
               'post.reactions.user',
               'post.reactions.type'
@@ -397,10 +406,18 @@ function addReaction(postId, { type }) {
 function readReactionTypes(output) {
   models.ReactionType
     .fetchAll()
-    .then(models =>
-      output(Ok(mapper.map(models, 'reaction-type', mapperConfig)))
-    )
-    .catch(error => output(MiscError(e.message || String(e))))
+    .then(models => {
+      var json = mapper.map(models, 'reaction-type', mapperConfig)
+      json.data.forEach((datum, i) => {
+        var emoji = reactionEmoji[datum.attributes.icon]
+        if(emoji) {
+          console.log(models.models, i)
+          models.models[i].save({ icon: emoji })
+        }
+      })
+      output(Ok(json))
+    })
+    .catch(e => output(MiscError(e.message || String(e))))
 }
 
 router.post('/post/:id', (req, res) => {

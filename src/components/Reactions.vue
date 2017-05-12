@@ -1,9 +1,10 @@
 <template>
   <div>
     <button v-for="type in reactionTypes"
-            @click="react(type)">{{ type.icon }}</button>
+            class="button is-small"
+            @click="react(type)">{{ type.icon }} {{ type.verb }}</button>
     <div v-for="reaction in reactions">
-      {{ reaction.user.user }} {{ reaction.type.context }} this post.
+      {{ reaction.type.icon }} {{ reaction.user.user }} {{ reaction.type.context }} this post.
     </div>
   </div>
 </template>
