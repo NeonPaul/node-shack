@@ -117,7 +117,7 @@ export default function(url) {
       var id
       var attributes = {}
       var exec = Object.assign(
-        () => this.postPayload('/' + model + '/' + id, model, payload),
+        () => this.postPayload('/' + model + '/' + id, model, attributes),
         {
           set(attrs, value) {
             if (typeof attrs !== 'object') {
