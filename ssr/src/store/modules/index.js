@@ -1,8 +1,10 @@
 import alert from './alert'
+import user from './user'
 import _ from 'lodash'
 
 const modules = {
-  alert
+  alert,
+  user
 }
 
 export default modules

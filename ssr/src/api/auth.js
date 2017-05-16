@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-fetch'
 
 export default baseUrl => ({
-  post: function (url, payload) {
+  post: function(url, payload) {
     return fetch(baseUrl + url, {
       method: 'POST',
       headers: {
@@ -22,9 +22,9 @@ export default baseUrl => ({
       }
     })
   },
-  requestToken: function (credentials) {
-    return this.post('/auth', credentials)
-    .then(response => {
+
+  requestToken: function(credentials) {
+    return this.post('/auth', credentials).then(response => {
       return response.token
     })
   }
