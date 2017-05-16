@@ -1,7 +1,10 @@
 const { createBundleRenderer } = require('vue-server-renderer')
 const clientManifest = require('./build/vue-ssr-client-manifest.json')
 const serverBundle = require('./build/vue-ssr-server-bundle.json')
-const template = require('fs').readFileSync(require.resolve('./index.template.html'), 'utf-8')
+const template = require('fs').readFileSync(
+  require.resolve('./index.template.html'),
+  'utf-8'
+)
 const renderer = createBundleRenderer(serverBundle, {
   template, // (optional) page template
   clientManifest // (optional) client build manifest
@@ -14,9 +17,7 @@ server.use(cookieParser())
 
 server.use(express.static(__dirname + '/build'))
 
-server.post('/auth', (req, res) => {
-  res.json({ token: 'asdfwj345rte' })
-})
+server.use(require('../api'))
 
 server.get('*', (req, res) => {
   const context = {
