@@ -7,9 +7,9 @@
     <div class="tabs"><ul>
       <li>Log in with:
       <li :class="{'is-active':method==='fb'}">
-        <a @click="method='fb'">Facebook</a></li>
+        <button @click="method='fb'">Facebook</button></li>
       <li :class="{'is-active':method==='password'}">
-        <a @click="method='password'">Password</a></li>
+        <button @click="method='password'">Password</button></li>
     </ul></div>
     <form v-if="method==='password'"
           @submit.prevent="login({ email: email, password: password })">
@@ -35,7 +35,7 @@
     <div v-if="method==='fb'"
          class="columns">
       <div class="column is-4 is-offset-4">
-        <a @click="loginFb">
+        <button @click="loginFb">
           <div class="card">
             <div class="card-image">
               <figure class="image">
@@ -44,7 +44,7 @@
             </div>
             <div class="card-content">Log in with Facebook</div>
           </div>
-        </a>
+        </button>
       </div>
     </div>
   </div>
