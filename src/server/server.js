@@ -7,6 +7,7 @@ import ReactDOM from 'react-dom/server'
 import auth from './auth'
 import store from '../store'
 import api from './api'
+import postParser  from './post-parser'
 
 const PORT = 3000
 
@@ -33,14 +34,17 @@ function router () {
         }
       }
 
-      router.resolve({
-        path: req.path,
-        query: req.query,
-        user: req.user,
-        store,
-        method: req.method,
-        body: req.body
-      }).then(route => {
+      Promise.all([
+        req.method === 'POST' ? postParser(req) : null,
+        router.resolve({
+          path: req.path,
+          query: req.query,
+          user: req.user,
+          store,
+          method: req.method,
+          body: req.body
+        })
+      ]).then(([formData, route]) => {
         if (route.redirect) {
           res.redirect(route.status || 302, route.redirect)
           return
@@ -48,6 +52,11 @@ function router () {
 
         const data = { ...route }
         const Route = route.component
+
+        if (Route.action) {
+          const action = Route.action(req.method, formData)
+          store.dispatch(action)
+        }
 
         data.children = ReactDOM.renderToString(
           <Provider store={store}>
