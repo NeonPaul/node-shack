@@ -29,9 +29,6 @@ class Html extends React.Component {
           <script dangerouslySetInnerHTML={{ __html: `
             window.initialState = ${JSON.stringify(state || '')}
           ` }} />
-          { user && <script dangerouslySetInnerHTML={{ __html: `
-            window.user = ${JSON.stringify(user)}
-          ` }} /> }
           { scripts.map(script => <script key={script} src={script} />) }
         </body>
       </html>

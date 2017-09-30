@@ -7,6 +7,7 @@ import App from './App'
 import history from './history'
 import router from './router'
 import store from './store'
+import { getUser } from './store'
 
 const context = {
   insertCss: (...styles) => {
@@ -26,10 +27,10 @@ async function onLocationChange (location, action, state) {
     const route = await router.resolve({
       path: location.pathname,
       query: queryString.parse(location.search),
-      user: window.user,
+      user: getUser(store.getState()),
       store,
-      method: state.method,
-      body: state.body
+      method: state && state.method,
+      body: state && state.body
     })
 
     if (currentLocation.key !== location.key) return
@@ -51,5 +52,14 @@ async function onLocationChange (location, action, state) {
   }
 }
 
+let user = getUser(store.getState())
+
 history.listen(onLocationChange)
+store.subscribe(() => {
+  const nextUser = getUser(store.getState())
+  if(nextUser !== user) {
+    user = nextUser
+    onLocationChange(history.location, history.action, history.location.state)
+  }
+})
 onLocationChange(currentLocation)

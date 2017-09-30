@@ -4,7 +4,7 @@ import fetchPonyfill from 'fetch-ponyfill'
 
 const { fetch } = fetchPonyfill()
 
-const SET = payload => ({ type: SET, payload })
+export const SET = payload => ({ type: SET, payload })
 
 const url = process.env.BROWSER ? '' : 'http://localhost:3000'
 
@@ -40,7 +40,7 @@ export const read = () => (dispatch) =>
  * follows a different convention (such as function maps) if it makes sense for your
  * project.
  */
-function counter(state = process.env.BROWSER ? window.initialState : 0, action) {
+function user(state = process.env.BROWSER ? window.initialState : null, action) {
   switch (action.type) {
   case SET:
     return action.payload
@@ -49,8 +49,10 @@ function counter(state = process.env.BROWSER ? window.initialState : 0, action) 
   }
 }
 
+export const getUser = (state) => state
+
 // Create a Redux store holding the state of your app.
 // Its API is { subscribe, dispatch, getState }.
-let store = createStore(counter, applyMiddleware(thunk))
+let store = createStore(user, applyMiddleware(thunk))
 
 export default store
