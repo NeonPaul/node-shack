@@ -23,11 +23,6 @@ export const increment = (step = 1) => (dispatch) =>
 
 export const decrement = () => increment(-1)
 
-export const read = () => (dispatch) =>
-  fetch(url + '/api')
-  .then(response => response.text())
-  .then(payload => dispatch(SET(payload)))
-
 /**
  * This is a reducer, a pure function with (state, action) => state signature.
  * It describes how an action transforms the state into the next state.

@@ -65,6 +65,7 @@ export default app => {
   passport.authenticate('local', { failureRedirect: '/' }),
   function (req, res) {
     req.session.user = req.user
+    //req.session.token = jwt.sign({ email: user }, secret)
     res.redirect('/')
   })
 }
