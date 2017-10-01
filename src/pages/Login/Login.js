@@ -16,8 +16,8 @@ class Login extends React.Component {
   render() {
     const {alert, method} = this.state;
     const login = (e) => {
+      return; // Just do a post for now
       e.preventDefault()
-      console.log(store, set)
       store.dispatch(set({ name: 'paul' }))
     }
     const loginFb = () => {}
@@ -37,13 +37,12 @@ class Login extends React.Component {
       <li className={method==='password' ? 'is-active':''}>
         <button onClick={setMethod('password')}>Password</button></li>
     </ul></div>
-    { method==='password' && <form
-          onSubmit={e => login(e, { email: e.target.email.value, password: e.target.password.value })}>
+    { method==='password' && <form method="post" action="login"
+          onSubmit={e => login(e, { email: e.target.username.value, password: e.target.password.value })}>
       <p className="control">
         <input className="input"
-               name="email"
-               type="email"
-               placeholder="Email"
+               name="username"
+               placeholder="Username"
                autoFocus />
       </p>
       <p className="control">

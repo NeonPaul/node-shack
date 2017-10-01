@@ -6,6 +6,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/server'
 import auth from './auth'
 import store from '../store'
+import {SET} from '../store'
 import api from './api'
 import postParser  from './post-parser'
 
@@ -57,6 +58,8 @@ function router () {
           const action = Route.action(req.method, formData)
           store.dispatch(action)
         }
+
+        store.dispatch(SET(req.user))
 
         data.children = ReactDOM.renderToString(
           <Provider store={store}>
