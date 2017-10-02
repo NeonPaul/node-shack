@@ -6,22 +6,21 @@ const { fetch } = fetchPonyfill()
 
 export const SET = payload => ({ type: SET, payload })
 
+export const setToken = payload => ({ type: setToken, payload })
+export const setVal = payload => ({ type: setVal, payload })
+
 const url = process.env.BROWSER ? '' : 'http://localhost:3000'
 
-export const increment = (step = 1) => (dispatch) =>
+export const fetchVal = () => (dispatch, getState) =>
   fetch(url + '/api', {
-    method: 'POST',
-    body: JSON.stringify({ step }),
     headers: {
-      'Content-Type': 'application/json'
+      'authorization': 'Bearer ' + getToken(getState())
     }
   })
   .then(response => response.text())
   .then(payload =>
-    dispatch(SET(payload))
+    dispatch(setVal(payload))
   )
-
-export const decrement = () => increment(-1)
 
 /**
  * This is a reducer, a pure function with (state, action) => state signature.
@@ -35,16 +34,22 @@ export const decrement = () => increment(-1)
  * follows a different convention (such as function maps) if it makes sense for your
  * project.
  */
-function user(state = process.env.BROWSER ? window.initialState : null, action) {
+function user (state = process.env.BROWSER ? window.initialState : {}, action) {
   switch (action.type) {
-  case SET:
-    return action.payload
-  default:
-    return state
+    case SET:
+      return Object.assign({}, state, { user: action.payload })
+    case setToken:
+      return Object.assign({}, state, { token: action.payload })
+    case setVal:
+      return Object.assign({}, state, { val: action.payload })
+    default:
+      return state
   }
 }
 
-export const getUser = (state) => state
+export const getUser = (state) => state.user
+export const getToken = (state) => state.token
+export const getVal = (state) => state.val
 
 // Create a Redux store holding the state of your app.
 // Its API is { subscribe, dispatch, getState }.

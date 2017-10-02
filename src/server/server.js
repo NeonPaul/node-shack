@@ -1,14 +1,13 @@
 import express from 'express'
 import { createServer } from 'http'
 import { Provider } from 'react-redux'
-
+import jwt from 'jsonwebtoken'
 import React from 'react'
 import ReactDOM from 'react-dom/server'
 import auth from './auth'
-import store from '../store'
-import {SET} from '../store'
+import { default as store, SET, setToken } from '../store'
 import api from './api'
-import postParser  from './post-parser'
+import postParser from './post-parser'
 
 const PORT = 3000
 
@@ -59,7 +58,12 @@ function router () {
           store.dispatch(action)
         }
 
-        store.dispatch(SET(req.user))
+        if (req.user) {
+          const token = jwt.sign({ email: req.user.email || req.user }, global.process.env.JWT_SECRET)
+
+          store.dispatch(setToken(token))
+          store.dispatch(SET(req.user))
+        }
 
         data.children = ReactDOM.renderToString(
           <Provider store={store}>

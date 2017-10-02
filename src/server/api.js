@@ -1,19 +1,31 @@
 import express from 'express'
 import bodyParser from 'body-parser'
+import jwt from 'jsonwebtoken'
 
 const api = express.Router()
 
 api.use(bodyParser.json())
 
-let counter = 0;
+function getToken(req) {
+  var token = req.headers.authorization
+  token = token && token.match(/Bearer ([^$]+)$/i)
+  token = (token && token[1]) || null
 
-api.post('/', (req, res) => {
-  counter += parseInt(req.body.step, 10);
-  res.send(String(counter))
+  return token
+}
+
+api.use((req, res, next) => {
+  var token = getToken(req)
+  if (!token) {
+    res.status(403).json({ message: 'No token provided' })
+    return
+  }
+
+  next()
 })
 
 api.get('/', (req, res) => {
-  res.send(String(counter || 0))
+  res.send('Ok')
 })
 
 export default api;

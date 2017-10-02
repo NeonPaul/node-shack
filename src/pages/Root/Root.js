@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { increment, decrement, getUser } from '../../store'
+import { fetchVal, getVal, getUser } from '../../store'
 
 import s from './root.css'
 import withStyles from 'isomorphic-style-loader/lib/withStyles'
@@ -65,24 +65,20 @@ const submitForm = function (event) {
   event.preventDefault()
 }
 
-const Root = ({ title, counter, inc, dec, user }) => (
+const Root = ({ title, counter, getVal, user, val = 'val' }) => (
   <div className='root'>
     User : {JSON.stringify(user)}
     Root page<br />
 
-    <form method='POST' onClick={submitForm}>
-      <button onClick={inc} name='step' value='1'>+</button>
-      <button onClick={dec} name='step' value='-1'>-</button>
-    </form>
+    <button onClick={getVal}>{ val }</button>
   </div>
 )
 
-const mapStateToProps = (state) => ({ counter: state, user: getUser(state) })
+const mapStateToProps = (state) => ({ counter: state, user: getUser(state), val: getVal(state) })
 const mapDispatchToProps = (dispatch) => ({
-  inc: () => {
-    dispatch(increment())
-  },
-  dec: () => dispatch(decrement())
+  getVal: () => {
+    dispatch(fetchVal())
+  }
 })
 
 Root.actions = []
