@@ -21,12 +21,19 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.hostname = "dev"
+  # redis
   config.vm.network :forwarded_port, guest: 6379, host: 6379
+  # mysql
+  config.vm.network "forwarded_port", guest: 3306, host: 3306
 
   config.vm.provider :virtualbox do |vbox|
+    vbox.gui = false
     vbox.customize ["modifyvm", :id, "--memory", 1024]
   end
 
   config.vm.provision :shell, :path => "init.sh"
+  config.vm.provision "file", source: "./shack.sql", destination: "shack.sql"
+  config.vm.provision "shell", path: "bootstrap.sh"
 end
