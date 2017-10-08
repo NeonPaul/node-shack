@@ -15,6 +15,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "babel-runtime": "6.23.0",
     "body-parser": "^1.17.2",
+    "bookshelf": "^0.10.4",
     "bulma": "^0.5.3",
     "busboy": "^0.2.14",
     "case-sensitive-paths-webpack-plugin": "2.1.1",
@@ -40,9 +41,12 @@
     "isomorphic-style-loader": "^3.0.0",
     "jest": "20.0.4",
     "jsonwebtoken": "^8.0.1",
+    "knex": "^0.11.7",
+    "mysql": "^2.15.0",
     "object-assign": "4.1.1",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
+    "phpass": "^0.1.1",
     "postcss-flexbugs-fixes": "3.0.0",
     "postcss-loader": "2.0.6",
     "promise": "7.1.1",
@@ -65,7 +69,7 @@
     "whatwg-fetch": "^2.0.3"
   },
   "scripts": {
-    "start": "node scripts/start.js",
+    "start": "export JWT_SECRET='secret' && node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
     "start:ssr": "node build/server.js",
@@ -115,6 +119,7 @@
   "devDependencies": {
     "eslint": "^3.19.0",
     "redux-devtools": "^3.4.0",
-    "standard": "^10.0.2"
+    "standard": "^10.0.2",
+    "webpack-node-externals": "^1.6.0"
   }
 }

@@ -92,9 +92,8 @@ function router () {
     }
   })
 
-  return router;
+  return router
 }
-
 
 if (require.main === module) {
   const app = express()
@@ -106,6 +105,11 @@ if (require.main === module) {
   app.use(router())
 
   app.use((err, req, res, next) => {
+    if (String(err.status) === '404') {
+      res.status(404)
+      res.send('Page not found')
+      return
+    }
     console.log(err)
     res.status(err.status || 500)
     res.send(`Internal server error`)
@@ -118,4 +122,4 @@ if (require.main === module) {
   })
 }
 
-export default router();
+export default router()

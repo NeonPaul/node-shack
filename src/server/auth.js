@@ -2,16 +2,32 @@ const passport = require('passport')
 const Strategy = require('passport-local').Strategy
 const session = require('express-session')
 const RedisStore = require('connect-redis')(session)
+const models = require('./models')
+const PasswordHash = require('phpass').PasswordHash
+const passwordHash = new PasswordHash()
+
+function getUser (email) {
+  return models.User.where('email', email).fetch({ require: true })
+}
 
 export default app => {
   passport.use(new Strategy(
-  function (username, password, cb) {
-    if (username === process.env.USERNAME && password === process.env.PASSWORD) {
-      return cb(null, username)
-    } else {
-      return cb(null, false)
+  async function (email, password, cb) {
+    try {
+      const user = await getUser(email)
+      const pwHash = await user.get('password')
+
+      if (passwordHash.checkPassword(password, pwHash)) {
+        cb(null, user)
+      } else {
+        cb(null, false)
+      }
+    } catch (e) {
+      cb(e)
     }
-  }))
+  }
+   )
+ )
 
 // Configure Passport authenticated session persistence.
 //
@@ -38,7 +54,7 @@ export default app => {
     const missing = envs.filter(env => !process.env[env])
 
     if (missing.length) {
-      console.log('Must set ' + missing.join(', ') + ' in process.env.');
+      console.log('Must set ' + missing.join(', ') + ' in process.env.')
       process.exit(1)
     }
 
