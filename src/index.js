@@ -58,7 +58,6 @@ history.listen(onLocationChange)
 store.subscribe(() => {
   const nextUser = getUser(store.getState())
   if (nextUser !== user) {
-    console.log(user)
     user = nextUser
     onLocationChange(history.location, history.action, history.location.state)
   }

@@ -44,7 +44,7 @@ function router () {
           method: req.method,
           body: req.body
         })
-      ]).then(([formData, route]) => {
+      ]).then(async ([formData, route]) => {
         if (route.redirect) {
           res.redirect(route.status || 302, route.redirect)
           return
@@ -53,16 +53,17 @@ function router () {
         const data = { ...route }
         const Route = route.component
 
-        if (Route.action) {
-          const action = Route.action(req.method, formData)
-          store.dispatch(action)
-        }
+        const token = req.user && jwt.sign({ email: req.user.email || req.user }, global.process.env.JWT_SECRET)
 
         if (req.user) {
-          const token = jwt.sign({ email: req.user.email || req.user }, global.process.env.JWT_SECRET)
-
           store.dispatch(setToken(token))
           store.dispatch(SET(req.user))
+        }
+
+        const action = route.action || Route.action
+
+        if (action) {
+          await store.dispatch(action(req.method, formData))
         }
 
         data.children = ReactDOM.renderToString(
@@ -84,7 +85,6 @@ function router () {
         res.status(route.status || 200)
         res.send(`<!doctype html>${html}`)
       }).catch(err => {
-        console.log(err)
         next(err)
       })
     } catch (err) {
@@ -110,7 +110,7 @@ if (require.main === module) {
       res.send('Page not found')
       return
     }
-    console.log(err)
+  //  console.log(err)
     res.status(err.status || 500)
     res.send(`Internal server error`)
   })

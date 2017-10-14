@@ -1,26 +1,10 @@
 import { createStore, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
-import fetchPonyfill from 'fetch-ponyfill'
-
-const { fetch } = fetchPonyfill()
+import posts from './posts/reducer'
 
 export const SET = payload => ({ type: SET, payload })
 
 export const setToken = payload => ({ type: setToken, payload })
-export const setVal = payload => ({ type: setVal, payload })
-
-const url = process.env.BROWSER ? '' : 'http://localhost:3000'
-
-export const fetchVal = () => (dispatch, getState) =>
-  fetch(url + '/api', {
-    headers: {
-      'authorization': 'Bearer ' + getToken(getState())
-    }
-  })
-  .then(response => response.text())
-  .then(payload =>
-    dispatch(setVal(payload))
-  )
 
 /**
  * This is a reducer, a pure function with (state, action) => state signature.
@@ -37,19 +21,22 @@ export const fetchVal = () => (dispatch, getState) =>
 function user (state = process.env.BROWSER ? window.initialState : {}, action) {
   switch (action.type) {
     case SET:
-      return Object.assign({}, state, { user: action.payload })
+      state = Object.assign({}, state, { user: action.payload })
+      break
     case setToken:
-      return Object.assign({}, state, { token: action.payload })
-    case setVal:
-      return Object.assign({}, state, { val: action.payload })
+      state = Object.assign({}, state, { token: action.payload })
+      break
     default:
-      return state
+      break
   }
+
+  return Object.assign({}, state, {
+    posts: posts(state.posts, action)
+  })
 }
 
 export const getUser = (state) => state.user
 export const getToken = (state) => state.token
-export const getVal = (state) => state.val
 
 // Create a Redux store holding the state of your app.
 // Its API is { subscribe, dispatch, getState }.

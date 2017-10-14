@@ -1,12 +1,12 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import jwt from 'jsonwebtoken'
+import postRouter from './api/posts/router'
 
 const api = express.Router()
 
 api.use(bodyParser.json())
 
-function getToken(req) {
+function getToken (req) {
   var token = req.headers.authorization
   token = token && token.match(/Bearer ([^$]+)$/i)
   token = (token && token[1]) || null
@@ -28,4 +28,6 @@ api.get('/', (req, res) => {
   res.send('Ok')
 })
 
-export default api;
+api.use('/posts', postRouter)
+
+export default api

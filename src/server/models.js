@@ -11,6 +11,7 @@ const knex = require('knex')({
 
 const bookshelf = require('bookshelf')(knex)
 bookshelf.plugin('visibility')
+bookshelf.plugin('pagination')
 
 const User = bookshelf.Model.extend({
   tableName: 'users',
@@ -26,4 +27,31 @@ const User = bookshelf.Model.extend({
   ]
 })
 
-module.exports = { User }
+var Post = bookshelf.Model.extend({
+  tableName: 'posts',
+  author: function () {
+    return this.belongsTo(User)
+  },
+  reactions: function () {
+    return this.hasMany(Reaction)
+  }
+})
+
+var Reaction = bookshelf.Model.extend({
+  tableName: 'response',
+  type: function () {
+    return this.belongsTo(ReactionType, 'response_type_id')
+  },
+  post: function () {
+    return this.belongsTo(Post)
+  },
+  user: function () {
+    return this.belongsTo(User)
+  }
+})
+
+var ReactionType = bookshelf.Model.extend({
+  tableName: 'response_type'
+})
+
+module.exports = { User, Post }

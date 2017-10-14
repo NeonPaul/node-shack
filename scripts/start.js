@@ -94,7 +94,7 @@ choosePort(HOST, DEFAULT_PORT)
       })
 
       devServer.use((err, req, res, next) => {
-        console.log('Caught error:', err)
+        // console.log('Caught error:', err)
       })
 /*
 

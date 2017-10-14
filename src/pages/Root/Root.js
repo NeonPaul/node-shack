@@ -1,9 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { fetchVal, getVal, getUser } from '../../store'
+import { getUser } from '../../store'
 
 import s from './root.css'
 import withStyles from 'isomorphic-style-loader/lib/withStyles'
+import Post from '../../components/Post/Post'
 
 const constructData = function (form, submitter) {
   const submittable = ['button', 'input', 'keygen', 'select', 'textarea']
@@ -65,20 +66,18 @@ const submitForm = function (event) {
   event.preventDefault()
 }
 
-const Root = ({ title, counter, getVal, user, val = 'val' }) => (
+const Root = ({ user, posts }) => (
   <div className='root'>
-    User : {JSON.stringify(user)}
-    Root page<br />
+    {(user.user)}
 
-    <button onClick={getVal}>{ val }</button>
+    <div>
+      { posts.map(post => <Post post={post} key={post.id} />) }
+    </div>
   </div>
 )
 
-const mapStateToProps = (state) => ({ counter: state, user: getUser(state), val: getVal(state) })
+const mapStateToProps = (state) => ({ user: getUser(state), posts: state.posts })
 const mapDispatchToProps = (dispatch) => ({
-  getVal: () => {
-    dispatch(fetchVal())
-  }
 })
 
 Root.actions = []
