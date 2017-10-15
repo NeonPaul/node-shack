@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { getUser } from '../../store'
+import { getPosts } from '../../store/posts/selectors'
 
 import s from './root.css'
 import withStyles from 'isomorphic-style-loader/lib/withStyles'
@@ -76,7 +77,7 @@ const Root = ({ user, posts }) => (
   </div>
 )
 
-const mapStateToProps = (state) => ({ user: getUser(state), posts: state.posts })
+const mapStateToProps = (state) => ({ user: getUser(state), posts: getPosts(state) })
 const mapDispatchToProps = (dispatch) => ({
 })
 
