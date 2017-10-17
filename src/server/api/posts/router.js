@@ -15,4 +15,20 @@ router.get('/', (req, res) => {
       })
 })
 
+router.post('/', async (req, res, next) => {
+  try {
+    const model = await models.Post.forge({
+      content: req.body.content,
+      user_id: req.user.id,
+      bitchingabout: 0
+    }).save()
+
+    await model.refresh({ withRelated: ['author', 'reactions'] })
+
+    res.status(201).send(model)
+  } catch (e) {
+    next(e)
+  }
+})
+
 export default router

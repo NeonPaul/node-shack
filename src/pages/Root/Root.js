@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getUser } from '../../store'
 import { getPosts } from '../../store/posts/selectors'
+import { createPost } from '../../store/posts/actions'
 
 import s from './root.css'
 import withStyles from 'isomorphic-style-loader/lib/withStyles'
@@ -67,9 +68,14 @@ const submitForm = function (event) {
   event.preventDefault()
 }
 
-const Root = ({ user, posts }) => (
+const Root = ({ user, posts, createPost }) => (
   <div className='root'>
     {(user.user)}
+
+    <form onSubmit={e => { createPost(e.target.content.value); e.preventDefault() }}>
+      <textarea rows='5' cols='70' id='content' />
+      <button>Submit</button>
+    </form>
 
     <div>
       { posts.map(post => <Post post={post} key={post.id} />) }
@@ -79,6 +85,7 @@ const Root = ({ user, posts }) => (
 
 const mapStateToProps = (state) => ({ user: getUser(state), posts: getPosts(state) })
 const mapDispatchToProps = (dispatch) => ({
+  createPost: content => dispatch(createPost(content))
 })
 
 Root.actions = []
