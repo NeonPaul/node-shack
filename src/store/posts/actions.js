@@ -3,8 +3,9 @@ import { getPosts } from './selectors'
 import { getToken } from '../'
 
 const { fetch } = fetchPonyfill()
+/* global BROWSER */
 
-const url = process.env.BROWSER ? '' : 'http://localhost:3000'
+const url = BROWSER ? '' : 'http://localhost:3000'
 
 export const ADD_POSTS = 'add posts'
 

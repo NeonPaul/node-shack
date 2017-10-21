@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
 import posts from './posts/reducer'
-
+/* global BROWSER */
 export const SET = payload => ({ type: SET, payload })
 
 export const setToken = payload => ({ type: setToken, payload })
@@ -18,7 +18,7 @@ export const setToken = payload => ({ type: setToken, payload })
  * follows a different convention (such as function maps) if it makes sense for your
  * project.
  */
-function user (state = process.env.BROWSER ? window.initialState : {}, action) {
+function user (state = BROWSER ? window.initialState : {}, action) {
   switch (action.type) {
     case SET:
       state = Object.assign({}, state, { user: action.payload })
