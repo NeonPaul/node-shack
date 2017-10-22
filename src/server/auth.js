@@ -18,6 +18,7 @@ export default app => {
       const pwHash = user && await user.get('password')
 
       console.log(user ? 'Password incorrect' : 'User not found')
+      console.log(password, pwHash)
 
       if (user && passwordHash.checkPassword(password, pwHash)) {
         cb(null, user)
