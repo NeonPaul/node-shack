@@ -18,7 +18,6 @@ export default app => {
       const pwHash = user && await user.get('password')
 
       console.log(user ? 'Password incorrect' : 'User not found')
-      console.log(password, pwHash)
 
       if (user && passwordHash.checkPassword(password, pwHash)) {
         cb(null, user)
@@ -83,9 +82,14 @@ export default app => {
 
   app.post('/login',
   passport.authenticate('local', { failureRedirect: '/' }),
-  function (req, res) {
-    req.session.user = req.user
-    res.redirect('/')
+  function (req, res, next) {
+    console.log('Seems to be successful')
+    try {
+      req.session.user = req.user
+      res.redirect('/')
+    } catch(e) {
+      next(e)
+    }
   })
 
   app.use((err, req, res, next) => {
