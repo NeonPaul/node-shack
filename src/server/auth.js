@@ -7,7 +7,7 @@ const PasswordHash = require('phpass').PasswordHash
 const passwordHash = new PasswordHash()
 
 function getUser (email) {
-  return models.User.where('email', email).fetch({ require: true })
+  return models.User.where('email', email).fetch()
 }
 
 export default app => {
@@ -15,12 +15,14 @@ export default app => {
   async function (email, password, cb) {
     try {
       const user = await getUser(email)
-      const pwHash = await user.get('password')
+      const pwHash = user && await user.get('password')
 
-      if (passwordHash.checkPassword(password, pwHash)) {
+      console.log(user ? 'Password incorrect' : 'User not found')
+
+      if (user && passwordHash.checkPassword(password, pwHash)) {
         cb(null, user)
       } else {
-        cb(null, false)
+        cb(null, false, { message: user ? 'Password incorrect' : 'User not found'})
       }
     } catch (e) {
       cb(e)
@@ -83,5 +85,10 @@ export default app => {
   function (req, res) {
     req.session.user = req.user
     res.redirect('/')
+  })
+
+  app.use((err, req, res, next) => {
+    console.log(err);
+    res.sendStatus(500);
   })
 }

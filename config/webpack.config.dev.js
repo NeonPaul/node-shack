@@ -217,7 +217,7 @@ module.exports = {
     // if (process.env.NODE_ENV === 'development') { ... }. See `./env.js`.
     new webpack.DefinePlugin(env.stringified),
     new webpack.DefinePlugin({
-      'process.env.BROWSER': true
+      'BROWSER': true
     }),
     // This is necessary to emit hot updates (currently CSS only):
     new webpack.HotModuleReplacementPlugin(),
