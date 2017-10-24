@@ -20,7 +20,6 @@ function router () {
 
   router.get('*', (req, res, next) => {
     try {
-      console.log('In get')
       const App = require('../App').default
       const Html = require('../components/Html').default
       const router = require('../router').default
@@ -35,8 +34,6 @@ function router () {
         }
       }
 
-      console.log('Lets promise')
-
       Promise.all([
         req.method === 'POST' ? postParser(req) : null,
         router.resolve({
@@ -48,7 +45,6 @@ function router () {
           body: req.body
         })
       ]).then(async ([formData, route]) => {
-        console.log('Got data')
         if (route.redirect) {
           res.redirect(route.status || 302, route.redirect)
           return
@@ -59,8 +55,6 @@ function router () {
 
         const token = req.user && jwt.sign({ email: req.user.email || req.user }, global.process.env.JWT_SECRET)
 
-        console.log('Lets set user')
-
         if (req.user) {
           store.dispatch(setToken(token))
           store.dispatch(SET(req.user))
@@ -68,12 +62,9 @@ function router () {
 
         const action = route.action || Route.action
 
-        console.log('Lets wait login')
         if (action) {
           await store.dispatch(action(req.method, formData))
         }
-
-        console.log('Render to string')
 
         data.children = ReactDOM.renderToString(
           <Provider store={store}>
@@ -90,17 +81,13 @@ function router () {
         data.state = store.getState()
         data.user = req.user
 
-        console.log('Render html')
-
         const html = ReactDOM.renderToStaticMarkup(<Html {...data} />)
         res.status(route.status || 200)
         res.send(`<!doctype html>${html}`)
       }).catch(err => {
-        console.log(err)
         next(err)
       })
     } catch (err) {
-      console.log(err)
       next(err)
     }
   })
