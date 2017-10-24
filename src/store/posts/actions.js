@@ -5,7 +5,9 @@ import { getToken } from '../'
 const { fetch } = fetchPonyfill()
 /* global BROWSER */
 
-const url = BROWSER ? '' : 'http://localhost:3000'
+const prot = process.env.HTTPS === 'true' ? 'https' : 'http'
+const host = process.env.HOST || 'localhost'
+const url = BROWSER ? '' : prot + '://' + host + ':' + process.env.PORT
 
 export const ADD_POSTS = 'add posts'
 
