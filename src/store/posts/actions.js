@@ -7,7 +7,8 @@ const { fetch } = fetchPonyfill()
 
 const prot = process.env.HTTPS === 'true' ? 'https' : 'http'
 const host = process.env.HOST || 'localhost'
-const url = BROWSER ? '' : prot + '://' + host + ':' + process.env.PORT
+const port = process.env.PORT || 3000
+const url = BROWSER ? '' : prot + '://' + host + ':' + port
 
 export const ADD_POSTS = 'add posts'
 

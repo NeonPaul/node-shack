@@ -5,9 +5,16 @@ const RedisStore = require('connect-redis')(session)
 const models = require('./models')
 const PasswordHash = require('phpass').PasswordHash
 const passwordHash = new PasswordHash()
+const cfg = require('../cfg').default
+const FacebookStrategy = require('passport-facebook')
 
 function getUser (email) {
   return models.User.where('email', email).fetch()
+}
+
+function createUser (email, user) {
+  user = user || email.split('@')[0]
+  return models.User.forge({ email, user }).save()
 }
 
 export default app => {
@@ -17,12 +24,10 @@ export default app => {
       const user = await getUser(email)
       const pwHash = user && await user.get('password')
 
-      console.log(user ? 'Password incorrect' : 'User not found')
-
       if (user && passwordHash.checkPassword(password, pwHash)) {
         cb(null, user)
       } else {
-        cb(null, false, { message: user ? 'Password incorrect' : 'User not found'})
+        cb(null, false, { message: user ? 'Password incorrect' : 'User not found' })
       }
     } catch (e) {
       cb(e)
@@ -30,6 +35,30 @@ export default app => {
   }
    )
  )
+
+  passport.use(new FacebookStrategy({
+    clientID: process.env.FB_APP_ID,
+    clientSecret: process.env.FB_APP_SECRET,
+    callbackURL: process.env.ROOT_URL + cfg.fbAuthPath,
+    profileFields: ['emails', 'displayName']
+  },
+  async function (accessToken, refreshToken, profile, cb) {
+    const email = profile.emails && profile.emails[0] && profile.emails[0].value
+    if (!email) {
+      return cb(null, false, { message: 'You must provide access to your email to login with facebook.' })
+    }
+
+    try {
+      let user = await getUser(email)
+      if (!user) {
+        user = await createUser(email, profile.displayName)
+      }
+      return cb(null, user)
+    } catch (err) {
+      return cb(err, null)
+    }
+  }
+))
 
 // Configure Passport authenticated session persistence.
 //
@@ -39,11 +68,19 @@ export default app => {
 // serializing, and querying the user record by ID from the database when
 // deserializing.
   passport.serializeUser(function (user, cb) {
-    cb(null, user)
+    try {
+      cb(null, user.get('email'))
+    } catch(e) {
+      cb(e, null)
+    }
   })
 
-  passport.deserializeUser(function (user, cb) {
-    cb(null, user)
+  passport.deserializeUser(async function (email, cb) {
+    try {
+      cb(null, await getUser(email))
+    } catch (e) {
+      cb(e, null)
+    }
   })
 
 // Use application-level middleware for common functionality, including
@@ -80,20 +117,29 @@ export default app => {
   app.use(passport.initialize())
   app.use(passport.session())
 
-  app.post('/login',
-  passport.authenticate('local', { failureRedirect: '/' }),
-  function (req, res, next) {
-    console.log('Seems to be successful')
+  const authSuccess = function (req, res, next) {
     try {
       req.session.user = req.user
       res.redirect('/')
-    } catch(e) {
+    } catch (e) {
       next(e)
     }
-  })
+  }
+
+  app.post(
+    '/login',
+    passport.authenticate('local', { failureRedirect: '/' }),
+    authSuccess
+  )
+
+  app.get(
+    cfg.fbAuthPath,
+    passport.authenticate('facebook', { failureRedirect: '/' }),
+    authSuccess
+  )
 
   app.use((err, req, res, next) => {
-    console.log(err);
-    res.sendStatus(500);
+    console.log(err)
+    res.sendStatus(500)
   })
 }

@@ -110,7 +110,6 @@ if (require.main === module) {
       res.send('Page not found')
       return
     }
-  //  console.log(err)
     res.status(err.status || 500)
     res.send(`Internal server error`)
   })
