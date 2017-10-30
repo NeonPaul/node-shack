@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
+import s from './html.css';
 
 class Html extends React.Component {
   render () {
@@ -13,6 +14,7 @@ class Html extends React.Component {
           <meta name='description' content={description} />
           <meta name='viewport' content='width=device-width, initial-scale=1' />
           <link rel='apple-touch-icon' href='apple-touch-icon.png' />
+          <style dangerouslySetInnerHTML={{ __html: s._getCss() }} />
           {styles.map(style =>
             <style
               key={style.id}
@@ -22,15 +24,14 @@ class Html extends React.Component {
         )}
         </head>
         <body>
-          <div
-            id='root'
+          <div className='app-wrapper'
             dangerouslySetInnerHTML={{ __html: children }}
       />
-          <script dangerouslySetInnerHTML={{ __html: `
-            window.initialState = ${JSON.stringify(state || '')}
-          ` }} />
-          { scripts.map(script => <script key={script} src={script} />) }
-        </body>
+        <script dangerouslySetInnerHTML={{ __html: `
+          window.initialState = ${JSON.stringify(state || '')}
+        ` }} />
+        { scripts.map(script => <script key={script} src={script} />) }
+          </body>
       </html>
     )
   }

@@ -4,6 +4,8 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles'
 import Button from '../../components/Button'
 import cfg from '../../cfg'
 
+const Input = ({ children, ...props }) => <label className='Input'><span className='Input__label'>{children}</span><input className='Input__input' {...props} /></label>
+
 // import { default as store, SET as set } from '../../store'
 
 const facebook = `https://www.facebook.com/v2.10/dialog/oauth?client_id=${process.env.FB_APP_ID}&redirect_uri=${process.env.ROOT_URL}${cfg.fbAuthPath}&scope=email`
@@ -28,32 +30,31 @@ class Login extends React.Component {
     // const setMethod = method => () => this.setState({ method });
 
     return (
-      <div>
-        <h1 className='title'>Log in</h1>
-        { alert.message && <div className={'notification is-' + alert.type}>
-          { alert.message }
-        </div> }
-        <div>
+      <div className='Login'>
+        <div className='Login__content'>
+          <h1 className='title'>Log in</h1>
+          { alert.message && <div className={'notification is-' + alert.type}>
+            { alert.message }
+          </div> }
           <Button href={facebook}>Log In With Facebook</Button>
+          <p>Or</p>
+          <form method='post' action='login'
+            onSubmit={e => login(e, { email: e.target.username.value, password: e.target.password.value })}>
+            <p className='control'>
+              <Input
+                name='username'
+                autoFocus>Email</Input>
+            </p>
+            <p className='control'>
+              <Input
+                type='password'
+                name='password'>Password</Input>
+            </p>
+            <p className='control'>
+              <Button>Login</Button>
+            </p>
+          </form>
         </div>
-        <form method='post' action='login'
-          onSubmit={e => login(e, { email: e.target.username.value, password: e.target.password.value })}>
-          <p className='control'>
-            <input className='input'
-              name='username'
-              placeholder='Username'
-              autoFocus />
-          </p>
-          <p className='control'>
-            <input className='input'
-              type='password'
-              placeholder='Password'
-              name='password' />
-          </p>
-          <p className='control'>
-            <button type='submit' className='button is-primary'>Login</button>
-          </p>
-        </form>
       </div>
     )
   }

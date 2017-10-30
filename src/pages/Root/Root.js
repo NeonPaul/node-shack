@@ -7,6 +7,7 @@ import { createPost } from '../../store/posts/actions'
 import s from './root.css'
 import withStyles from 'isomorphic-style-loader/lib/withStyles'
 import Post from '../../components/Post/Post'
+import Button from '../../components/Button'
 
 const constructData = function (form, submitter) {
   const submittable = ['button', 'input', 'keygen', 'select', 'textarea']
@@ -73,8 +74,8 @@ const Root = ({ user, posts, createPost }) => (
     {(user.user)}
 
     <form onSubmit={e => { createPost(e.target.content.value); e.preventDefault() }}>
-      <textarea rows='5' cols='70' id='content' />
-      <button>Submit</button>
+      <textarea rows='5' cols='70' id='content' className='textarea' />
+      <Button>Submit</Button>
     </form>
 
     <div>

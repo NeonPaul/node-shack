@@ -51,6 +51,7 @@
     "phpass": "^0.1.1",
     "postcss-flexbugs-fixes": "3.0.0",
     "postcss-loader": "2.0.6",
+    "postcss-simple-vars": "^4.1.0",
     "promise": "7.1.1",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",

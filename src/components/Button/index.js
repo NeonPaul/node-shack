@@ -1,3 +1,5 @@
 import React from 'react'
+import s from './styles.css'
+import withStyles from 'isomorphic-style-loader/lib/withStyles'
 
-export default ({ children, ...props }) => <a {...props}>{children}</a>
+export default withStyles(s)(({ children, ...props }) => React.createElement(props.href ? 'a' : 'button', {...props, className: 'Button ' + (props.className || '')}, children))

@@ -1,0 +1,6 @@
+.media {
+  display: flex;
+  border-radius: 2em;
+  background: $light;
+  margin: 1em;
+}
