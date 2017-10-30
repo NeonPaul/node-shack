@@ -24,7 +24,7 @@ class Html extends React.Component {
         )}
         </head>
         <body>
-          <div className='app-wrapper'
+          <div id='root' className='app-wrapper'
             dangerouslySetInnerHTML={{ __html: children }}
       />
         <script dangerouslySetInnerHTML={{ __html: `
