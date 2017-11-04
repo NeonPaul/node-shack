@@ -9,7 +9,7 @@ import { default as store, SET, setToken } from '../store'
 import api from './api'
 import postParser from './post-parser'
 
-const PORT = 3000
+const PORT = process.env.PORT || 3000
 
 function router () {
   const router = express.Router()
