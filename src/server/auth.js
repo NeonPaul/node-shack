@@ -70,7 +70,7 @@ export default app => {
   passport.serializeUser(function (user, cb) {
     try {
       cb(null, user.get('email'))
-    } catch(e) {
+    } catch (e) {
       cb(e, null)
     }
   })
@@ -88,7 +88,7 @@ export default app => {
   const sessionConfig = {}
 
   if (process.env.NODE_ENV === 'production') {
-    const envs = ['SESSION_SECRET', 'REDIS_URL', 'USERNAME', 'PASSWORD']
+    const envs = ['SESSION_SECRET', 'REDIS_URL']
 
     const missing = envs.filter(env => !process.env[env])
 

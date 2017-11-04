@@ -76,7 +76,7 @@ function router () {
           { id: 'css', cssText: [...css].join('') }
         ]
         data.scripts = [
-          global.process.env.CLIENT_MAIN
+          process.env.NODE_ENV === 'production' ? JSON.parse(require('fs').readFileSync('./asset-manifest.json', 'utf8'))['main.js'] : global.process.env.CLIENT_MAIN
         ]
         data.state = store.getState()
         data.user = req.user
@@ -95,12 +95,12 @@ function router () {
   return router
 }
 
-if (require.main === module) {
+if (process.env.NODE_ENV === 'production') {
   const app = express()
 
   // Serve static pages before the auth stuff so we don't
   // create sessions on requests for assets
-  app.use(express.static('./build'))
+  app.use('/static', express.static('./static'))
 
   app.use(router())
 
@@ -116,8 +116,10 @@ if (require.main === module) {
 
   const server = createServer(app)
 
-  server.listen(PORT, () => {
-    console.log(`==> 🌎  http://0.0.0.0:${PORT}/`)
+  console.log('Starting server...')
+
+  server.listen(PORT, (err) => {
+    console.log(err || `==> 🌎  http://0.0.0.0:${PORT}/`)
   })
 }
 

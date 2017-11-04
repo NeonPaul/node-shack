@@ -94,9 +94,9 @@ choosePort(HOST, DEFAULT_PORT)
         }
       })
 
-      devServer.use((err, req, res, next) => {
+      /* devServer.use((err, req, res, next) => {
         // console.log('Caught error:', err)
-      })
+      }) */
 /*
 
       wdm.waitUntilValid(stats => {

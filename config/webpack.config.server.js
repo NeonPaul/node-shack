@@ -1,15 +1,12 @@
 'use strict'
 
-const path = require('path')
 const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
-const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 const eslintFormatter = require('react-dev-utils/eslintFormatter')
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
 const paths = require('./paths')
-const getClientEnvironment = require('./env')
 const postcss = require('./postcss')
 var nodeExternals = require('webpack-node-externals')
 
@@ -20,8 +17,6 @@ const publicPath = paths.servedPath
 // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
 // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
 const publicUrl = publicPath.slice(0, -1)
-// Get environment variables to inject into our app.
-const env = getClientEnvironment(publicUrl)
 
 // Note: defined here because it will be used more than once.
 const cssFilename = 'static/css/[name].[contenthash:8].css'
@@ -53,10 +48,7 @@ module.exports = {
     // We placed these paths second because we want `node_modules` to "win"
     // if there are any conflicts. This matches Node resolution mechanism.
     // https://github.com/facebookincubator/create-react-app/issues/253
-    modules: ['node_modules', paths.appNodeModules].concat(
-      // It is guaranteed to exist because we tweak it in `env.js`
-      process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
-    ),
+    modules: ['node_modules', paths.appNodeModules],
     // These are the reasonable defaults supported by the Node ecosystem.
     // We also include JSX as a common component filename extension to support
     // some tools, although we do not recommend using it, see:
@@ -191,20 +183,8 @@ module.exports = {
     ]
   },
   plugins: [
-    // Makes some environment variables available in index.html.
-    // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
-    // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
-    // In production, it will be an empty string unless you specify "homepage"
-    // in `package.json`, in which case it will be the pathname of that URL.
-    new InterpolateHtmlPlugin(env.raw),
-    // Makes some environment variables available to the JS code, for example:
-    // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.
-    // It is absolutely essential that NODE_ENV was set to production here.
-    // Otherwise React will be compiled in the very slow development mode.
-    new webpack.DefinePlugin(env.stringified),
     new webpack.DefinePlugin({
-      'BROWSER': false,
-      'process.env': JSON.stringify(process.env)
+      'BROWSER': false
     }),
     // Note: this won't work without ExtractTextPlugin.extract(..) in `loaders`.
     new ExtractTextPlugin({
@@ -262,6 +242,7 @@ module.exports = {
     dgram: 'empty',
     fs: 'empty',
     net: 'empty',
-    tls: 'empty'
+    tls: 'empty',
+    process: false
   }
 }

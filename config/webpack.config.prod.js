@@ -8,7 +8,6 @@ const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 const eslintFormatter = require('react-dev-utils/eslintFormatter')
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
 const paths = require('./paths')
-const getClientEnvironment = require('./env')
 const postcss = require('./postcss')
 
 // Webpack uses `publicPath` to determine where the app is being served from.
@@ -18,14 +17,6 @@ const publicPath = paths.servedPath
 // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
 // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
 const publicUrl = publicPath.slice(0, -1)
-// Get environment variables to inject into our app.
-const env = getClientEnvironment(publicUrl)
-
-// Assert this just to be safe.
-// Development builds of React are slow and not intended for production.
-if (env.stringified['process.env'].NODE_ENV !== '"production"') {
-  throw new Error('Production builds must have NODE_ENV=production.')
-}
 
 // Note: defined here because it will be used more than once.
 const cssFilename = 'static/css/[name].[contenthash:8].css'
@@ -62,10 +53,7 @@ module.exports = {
     // We placed these paths second because we want `node_modules` to "win"
     // if there are any conflicts. This matches Node resolution mechanism.
     // https://github.com/facebookincubator/create-react-app/issues/253
-    modules: ['node_modules', paths.appNodeModules].concat(
-      // It is guaranteed to exist because we tweak it in `env.js`
-      process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
-    ),
+    modules: ['node_modules', paths.appNodeModules],
     // These are the reasonable defaults supported by the Node ecosystem.
     // We also include JSX as a common component filename extension to support
     // some tools, although we do not recommend using it, see:

@@ -77,7 +77,8 @@
     "test": "node scripts/test.js --env=jsdom",
     "start:ssr": "node build/server.js",
     "build:server": "node scripts/build-server.js",
-    "lint": "eslint --fix src"
+    "lint": "eslint --fix src",
+    "postinstall": "npm run build"
   },
   "jest": {
     "collectCoverageFrom": [
