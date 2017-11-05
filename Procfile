@@ -1,1 +1,1 @@
-web: node scripts/start.js
+web: cd build && node server.js
