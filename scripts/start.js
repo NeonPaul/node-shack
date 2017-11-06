@@ -12,9 +12,6 @@ process.on('unhandledRejection', err => {
   throw err
 })
 
-// Ensure environment variables are read.
-require('../config/env')
-
 const chalk = require('chalk')
 const webpack = require('webpack')
 const clearConsole = require('react-dev-utils/clearConsole')
