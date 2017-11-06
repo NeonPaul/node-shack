@@ -21,7 +21,15 @@ class Html extends React.Component {
               id={style.id}
               dangerouslySetInnerHTML={{ __html: style.cssText }}
           />
+
         )}
+        <script dangerouslySetInnerHTML={{ __html: `
+          window.process = {
+            env: JSON.parse(${JSON.stringify(JSON.stringify({
+              ROOT_URL: process.env.ROOT_URL,
+              FB_APP_ID: process.env.FB_APP_ID
+            }))})
+          }`}} />
         </head>
         <body>
           <div id='root' className='app-wrapper'
