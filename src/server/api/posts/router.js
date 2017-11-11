@@ -31,4 +31,23 @@ router.post('/', async (req, res, next) => {
   }
 })
 
+router.merge('/:id', async (req, res, next) => {
+  try {
+    const model = await models.Post.where({ id: req.params.id }).fetch()
+    if (!model) {
+      throw new Error('Post not found')
+    }
+    if (model.user_id !== req.user.id) {
+      throw new Error('Cannot edit another user\'s post')
+    }
+    model.set({ content: req.body.content })
+    await model.save()
+    await model.refresh({ withRelated: ['author', 'reactions'] })
+
+    res.status(200).send(model)
+  } catch (e) {
+    next(e)
+  }
+})
+
 export default router
