@@ -1,18 +1,19 @@
-'use strict'
+"use strict";
 
-const path = require('path')
-const webpack = require('webpack')
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
-const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
-const eslintFormatter = require('react-dev-utils/eslintFormatter')
-const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
-const paths = require('./paths')
-const postcss = require('./postcss')
-var hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true'
+const path = require("path");
+const webpack = require("webpack");
+const CaseSensitivePathsPlugin = require("case-sensitive-paths-webpack-plugin");
+const WatchMissingNodeModulesPlugin = require("react-dev-utils/WatchMissingNodeModulesPlugin");
+const eslintFormatter = require("react-dev-utils/eslintFormatter");
+const ModuleScopePlugin = require("react-dev-utils/ModuleScopePlugin");
+const paths = require("./paths");
+const postcss = require("./postcss");
+var hotMiddlewareScript =
+  "webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true";
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
-const publicPath = '/'
+const publicPath = "/";
 
 // This is the development configuration.
 // It is focused on developer experience and fast rebuilds.
@@ -20,16 +21,16 @@ const publicPath = '/'
 module.exports = {
   // You may want 'eval' instead if you prefer to see the compiled output in DevTools.
   // See the discussion in https://github.com/facebookincubator/create-react-app/issues/343.
-  devtool: 'cheap-module-source-map',
+  devtool: "cheap-module-source-map",
   // These are the "entry points" to our application.
   // This means they will be the "root" imports that are included in JS bundle.
   // The first two entry points enable "hot" CSS and auto-refreshes for JS.
   entry: [
     hotMiddlewareScript,
     // We ship a few polyfills by default:
-    require.resolve('./polyfills'),
+    require.resolve("./polyfills"),
     // Errors should be considered fatal in development
-    require.resolve('react-error-overlay'),
+    //require.resolve('react-error-overlay'),
     // Finally, this is your app's code:
     paths.appIndexJs
     // We include the app code last so that if there is a runtime error during
@@ -44,29 +45,28 @@ module.exports = {
     // This does not produce a real file. It's just the virtual path that is
     // served by WebpackDevServer in development. This is the JS bundle
     // containing code from all our entry points, and the Webpack runtime.
-    filename: 'static/js/bundle.js',
+    filename: "static/js/bundle.js",
     // There are also additional JS chunk files if you use code splitting.
-    chunkFilename: 'static/js/[name].chunk.js',
+    chunkFilename: "static/js/[name].chunk.js",
     // This is the URL that app is served from. We use "/" in development.
     publicPath: publicPath,
     // Point sourcemap entries to original disk location (format as URL on Windows)
     devtoolModuleFilenameTemplate: info =>
-      path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')
+      path.resolve(info.absoluteResourcePath).replace(/\\/g, "/")
   },
   resolve: {
-    modules: ['node_modules', paths.appNodeModules],
+    modules: ["node_modules", paths.appNodeModules],
     // These are the reasonable defaults supported by the Node ecosystem.
     // We also include JSX as a common component filename extension to support
     // some tools, although we do not recommend using it, see:
     // https://github.com/facebookincubator/create-react-app/issues/290
     // `web` extension prefixes have been added for better support
     // for React Native Web.
-    extensions: ['.web.js', '.js', '.json', '.web.jsx', '.jsx'],
+    extensions: [".web.js", ".js", ".json", ".web.jsx", ".jsx"],
     alias: {
-
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
-      'react-native': 'react-native-web'
+      "react-native": "react-native-web"
     },
     plugins: [
       // Prevents users from importing files from outside of src/ (or node_modules/).
@@ -88,14 +88,13 @@ module.exports = {
       // It's important to do this before Babel processes the JS.
       {
         test: /\.(js|jsx)$/,
-        enforce: 'pre',
+        enforce: "pre",
         use: [
           {
             options: {
               formatter: eslintFormatter
-
             },
-            loader: require.resolve('eslint-loader')
+            loader: require.resolve("eslint-loader")
           }
         ],
         include: paths.appSrc
@@ -120,9 +119,9 @@ module.exports = {
           /\.jpe?g$/,
           /\.png$/
         ],
-        loader: require.resolve('file-loader'),
+        loader: require.resolve("file-loader"),
         options: {
-          name: 'static/media/[name].[hash:8].[ext]'
+          name: "static/media/[name].[hash:8].[ext]"
         }
       },
       // "url" loader works like "file" loader except that it embeds assets
@@ -130,19 +129,18 @@ module.exports = {
       // A missing `test` is equivalent to a match.
       {
         test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-        loader: require.resolve('url-loader'),
+        loader: require.resolve("url-loader"),
         options: {
           limit: 10000,
-          name: 'static/media/[name].[hash:8].[ext]'
+          name: "static/media/[name].[hash:8].[ext]"
         }
       },
       // Process JS with Babel.
       {
         test: /\.(js|jsx)$/,
         include: paths.appSrc,
-        loader: require.resolve('babel-loader'),
+        loader: require.resolve("babel-loader"),
         options: {
-
           // This is a feature of `babel-loader` for webpack (not Babel itself).
           // It enables caching results in ./node_modules/.cache/babel-loader/
           // directory for faster rebuilds.
@@ -157,19 +155,19 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          require.resolve('isomorphic-style-loader'),
+          require.resolve("isomorphic-style-loader"),
           {
-            loader: require.resolve('css-loader'),
+            loader: require.resolve("css-loader"),
             options: {
               importLoaders: 1
             }
           },
           {
-            loader: require.resolve('postcss-loader'),
+            loader: require.resolve("postcss-loader"),
             options: {
               // Necessary for external CSS imports to work
               // https://github.com/facebookincubator/create-react-app/issues/2677
-              ident: 'postcss',
+              ident: "postcss",
               plugins: () => postcss
             }
           }
@@ -183,7 +181,7 @@ module.exports = {
     // Add module names to factory functions so they appear in browser profiler.
     new webpack.NamedModulesPlugin(),
     new webpack.DefinePlugin({
-      'BROWSER': true
+      BROWSER: true
     }),
     // This is necessary to emit hot updates (currently CSS only):
     new webpack.HotModuleReplacementPlugin(),
@@ -206,10 +204,10 @@ module.exports = {
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.
   node: {
-    dgram: 'empty',
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty',
+    dgram: "empty",
+    fs: "empty",
+    net: "empty",
+    tls: "empty",
     process: false
   },
   // Turn off performance hints during development because we don't do any
@@ -218,4 +216,4 @@ module.exports = {
   performance: {
     hints: false
   }
-}
+};

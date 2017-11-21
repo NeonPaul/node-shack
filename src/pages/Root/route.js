@@ -1,18 +1,19 @@
-import Root from './Root'
-import { fetchPosts } from '../../store/posts/actions'
+import React from "react";
+import Root from "./Root";
+import { fetchPosts } from "../../store/posts/actions";
 
-const title = `Root`
+const title = `Root`;
 
 export default {
-  path: '/',
+  path: "/",
 
-  action (...args) {
+  action(ctx, params) {
     return {
       title,
-      component: Root,
-      action (method, data) {
-        return fetchPosts()
+      component: () => <Root edit={ctx.query.edit} />,
+      action(method, data) {
+        return fetchPosts();
       }
-    }
+    };
   }
-}
+};
