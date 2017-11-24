@@ -2,7 +2,7 @@ import React from "react";
 import marked from "marked";
 import s from "./styles.css";
 import withStyles from "isomorphic-style-loader/lib/withStyles";
-//import Editor from "../Editor";
+import Editor from "../Editor";
 
 const html = __html => ({ __html });
 
@@ -31,7 +31,7 @@ export default withStyles(s)(
             </div>
           ) : (
             <div>
-              <editor value={newContent} />
+              <Editor value={post.content} />
               <button onClick={submitEdit} className="button is-primary">
                 Save
               </button>

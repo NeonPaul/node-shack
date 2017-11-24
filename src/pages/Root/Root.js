@@ -8,6 +8,7 @@ import s from "./root.css";
 import withStyles from "isomorphic-style-loader/lib/withStyles";
 import Post from "../../components/Post/Post";
 import Button from "../../components/Button";
+import Editor from "../../components/Editor";
 
 const constructData = function(form, submitter) {
   const submittable = ["button", "input", "keygen", "select", "textarea"];
@@ -88,11 +89,14 @@ const Root = ({ user, posts, createPost, edit }) => (
 
     <form
       onSubmit={e => {
-        createPost(e.target.content.value);
+        const content = e.target.content;
+        setTimeout(() => {
+          createPost(content.value);
+        }, 0);
         e.preventDefault();
       }}
     >
-      <textarea rows="5" cols="70" id="content" className="textarea" />
+      <Editor name="content" value="" />
       <Button>Submit</Button>
     </form>
 
