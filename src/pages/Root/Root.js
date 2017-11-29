@@ -102,7 +102,12 @@ const Root = ({ user, posts, createPost, edit }) => (
 
     <div>
       {posts.map(post => (
-        <Post post={post} key={post.id} editing={isEditing(user, post, edit)} />
+        <Post
+          post={post}
+          key={post.id}
+          editing={isEditing(user, post, edit)}
+          editable={user.id === post.user_id}
+        />
       ))}
     </div>
   </div>
