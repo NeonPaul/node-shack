@@ -3,6 +3,7 @@ import React from "react";
 let SimpleMDE;
 
 try {
+  /*eslint-disable import/no-webpack-loader-syntax*/
   require("!!style-loader!css-loader!simplemde/dist/simplemde.min.css");
   SimpleMDE = require("simplemde");
 } catch (e) {}

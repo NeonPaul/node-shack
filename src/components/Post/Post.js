@@ -18,7 +18,7 @@ class Post extends React.Component {
   }
 
   render() {
-    const { post, editing, editable, newContent, submitEdit } = this.props;
+    const { post, editing, editable, submitEdit } = this.props;
 
     return (
       <div className="media">
