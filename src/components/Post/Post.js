@@ -5,6 +5,7 @@ import marked from "marked";
 import s from "./styles.css";
 import withStyles from "isomorphic-style-loader/lib/withStyles";
 import Editor from "../Editor";
+import Reactions from "../Reactions";
 
 const html = __html => ({ __html });
 
@@ -36,7 +37,7 @@ class Post extends React.Component {
               <div className="content box">
                 <div dangerouslySetInnerHTML={html(marked(post.content))} />
                 {editable && <a href={"?edit=" + post.id}>Edit</a>}
-                <reactions postId={post.id} reactions={post.reactions} />
+                <Reactions postId={post.id} reactions={post.reactions} />
               </div>
             ) : (
               <div>
