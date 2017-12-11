@@ -1,5 +1,5 @@
-import history from '.'
+import history from ".";
 
-export default (location) => {
-  history.push(location)
-}
+export default (location, state) => {
+  history.push(location, state);
+};

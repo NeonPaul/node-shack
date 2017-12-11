@@ -8,6 +8,8 @@ import auth from "./auth";
 import { default as createStore, SET, setToken } from "../store";
 import api from "./api";
 import postParser from "./post-parser";
+import parseForm from "form/dist/server";
+import FormData from "form/dist/form-data";
 
 const PORT = process.env.PORT || 3000;
 
@@ -18,7 +20,7 @@ function router() {
 
   router.use("/api", api);
 
-  router.get("*", (req, res, next) => {
+  router.use("*", async (req, res, next) => {
     try {
       const App = require("../App").default;
       const Html = require("../components/Html").default;
@@ -36,70 +38,67 @@ function router() {
 
       const store = createStore();
 
-      Promise.all([
-        req.method === "POST" ? postParser(req) : null,
+      const [body, route] = await Promise.all([
+        parseForm(req),
         router.resolve({
           path: req.path,
           query: req.query,
-          user: req.user,
-          store,
-          method: req.method,
-          body: req.body
+          user: req.user
         })
-      ])
-        .then(async ([formData, route]) => {
-          if (route.redirect) {
-            res.redirect(route.status || 302, route.redirect);
-            return;
-          }
+      ]);
 
-          const data = { ...route };
-          const Route = route.component;
+      const formData = body;
 
-          const token =
-            req.user &&
-            jwt.sign(
-              { email: req.user.email || req.user },
-              global.process.env.JWT_SECRET
-            );
+      if (route.redirect) {
+        res.redirect(route.status || 302, route.redirect);
+        return;
+      }
 
-          if (req.user) {
-            store.dispatch(setToken(token));
-            store.dispatch(SET(req.user.serialize()));
-          }
+      const data = { ...route };
+      const Route = route.component;
 
-          const action = route.action || Route.action;
+      const token =
+        req.user &&
+        jwt.sign(
+          { email: req.user.email || req.user },
+          global.process.env.JWT_SECRET
+        );
 
-          if (action) {
-            await store.dispatch(action(req.method, formData));
-          }
+      if (req.user) {
+        store.dispatch(setToken(token));
+        store.dispatch(SET(req.user.serialize()));
+      }
 
-          data.children = ReactDOM.renderToString(
-            <Provider store={store}>
-              <App context={context}>
-                <Route />
-              </App>
-            </Provider>
-          );
+      const action = route.action || Route.action;
 
-          data.styles = [{ id: "css", cssText: [...css].join("") }];
-          data.scripts = [
-            process.env.NODE_ENV === "production"
-              ? JSON.parse(
-                  require("fs").readFileSync("./asset-manifest.json", "utf8")
-                )["main.js"]
-              : global.process.env.CLIENT_MAIN
-          ];
-          data.state = store.getState();
-          data.user = req.user;
+      if (action) {
+        await store.dispatch(
+          action(req.method, formData, { cookie: req.headers.cookie })
+        );
+      }
 
-          const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
-          res.status(route.status || 200);
-          res.send(`<!doctype html>${html}`);
-        })
-        .catch(err => {
-          next(err);
-        });
+      data.children = ReactDOM.renderToString(
+        <Provider store={store}>
+          <App context={context}>
+            <Route />
+          </App>
+        </Provider>
+      );
+
+      data.styles = [{ id: "css", cssText: [...css].join("") }];
+      data.scripts = [
+        process.env.NODE_ENV === "production"
+          ? JSON.parse(
+              require("fs").readFileSync("./asset-manifest.json", "utf8")
+            )["main.js"]
+          : global.process.env.CLIENT_MAIN
+      ];
+      data.state = store.getState();
+      data.user = req.user;
+
+      const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
+      res.status(route.status || 200);
+      res.send(`<!doctype html>${html}`);
     } catch (err) {
       next(err);
     }

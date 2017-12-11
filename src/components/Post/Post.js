@@ -1,11 +1,10 @@
 import React from "react";
-import { connect } from "react-redux";
-import { updatePost } from "../../store/posts/actions";
 import marked from "marked";
 import s from "./styles.css";
 import withStyles from "isomorphic-style-loader/lib/withStyles";
 import Editor from "../Editor";
 import Reactions from "../Reactions";
+import Form from "../Form";
 
 const html = __html => ({ __html });
 
@@ -19,7 +18,7 @@ class Post extends React.Component {
   }
 
   render() {
-    const { post, editing, editable, submitEdit } = this.props;
+    const { post, editing, editable } = this.props;
 
     return (
       <div className="media">
@@ -40,18 +39,20 @@ class Post extends React.Component {
                 <Reactions postId={post.id} reactions={post.reactions} />
               </div>
             ) : (
-              <div>
+              <Form method="post" action="/">
                 <Editor
                   value={this.state.content}
                   onChange={content => this.setState({ content })}
+                  name="content"
                 />
                 <button
-                  onClick={() => submitEdit(post.id, this.state.content)}
                   className="button is-primary"
+                  name="edit"
+                  value={post.id}
                 >
                   Save
                 </button>
-              </div>
+              </Form>
             )}
           </div>
         </div>
@@ -60,12 +61,4 @@ class Post extends React.Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  submitEdit: (id, content) => {
-    dispatch(updatePost(id, content)).then(() => {
-      window.location = "/";
-    });
-  }
-});
-
-export default withStyles(s)(connect(() => ({}), mapDispatchToProps)(Post));
+export default withStyles(s)(Post);

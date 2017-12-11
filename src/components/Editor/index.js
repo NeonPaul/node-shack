@@ -19,6 +19,7 @@ class Editor extends React.Component {
   mounted(el) {
     if (!el) {
       this.unmounted();
+      return;
     }
 
     this.mde = new SimpleMDE({
@@ -39,8 +40,10 @@ class Editor extends React.Component {
   }
 
   unmounted() {
-    this.mde.codemirror.off("change", this.onTextChange);
-    this.mde = null;
+    if (this.mde) {
+      this.mde.codemirror.off("change", this.onTextChange);
+      this.mde = null;
+    }
   }
 
   componentWillReceiveProps({ value }) {
