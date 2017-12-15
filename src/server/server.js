@@ -62,6 +62,7 @@ function router() {
             );
 
           if (req.user) {
+            console.log(req.user)
             store.dispatch(setToken(token));
             store.dispatch(SET(req.user.serialize()));
           }
