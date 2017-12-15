@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import React from "react";
 import ReactDOM from "react-dom/server";
 import auth from "./auth";
-import { default as store, SET, setToken } from "../store";
+import { default as createStore, SET, setToken } from "../store";
 import api from "./api";
 import postParser from "./post-parser";
 
@@ -33,6 +33,8 @@ function router() {
           });
         }
       };
+
+      const store = createStore();
 
       Promise.all([
         req.method === "POST" ? postParser(req) : null,
@@ -62,7 +64,6 @@ function router() {
             );
 
           if (req.user) {
-            console.log(req.user)
             store.dispatch(setToken(token));
             store.dispatch(SET(req.user.serialize()));
           }

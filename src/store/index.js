@@ -40,6 +40,4 @@ export const getToken = (state) => state.token
 
 // Create a Redux store holding the state of your app.
 // Its API is { subscribe, dispatch, getState }.
-let store = createStore(user, applyMiddleware(thunk))
-
-export default store
+export default () => createStore(user, applyMiddleware(thunk))

@@ -6,8 +6,10 @@ import queryString from 'query-string'
 import App from './App'
 import history from './history'
 import router from './router'
-import store from './store'
+import createStore from './store'
 import { getUser } from './store'
+
+const store = createStore()
 
 const context = {
   insertCss: (...styles) => {
