@@ -27,7 +27,8 @@ class Html extends React.Component {
           window.process = {
             env: JSON.parse(${JSON.stringify(JSON.stringify({
               ROOT_URL: process.env.ROOT_URL,
-              FB_APP_ID: process.env.FB_APP_ID
+              FB_APP_ID: process.env.FB_APP_ID,
+              NODE_ENV: process.env.NODE_ENV
             }))})
           }`}} />
         </head>
