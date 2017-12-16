@@ -1,5 +1,5 @@
 import React from "react";
-import formrouter from "querybucket/dist/form";
+import formrouter from "universal-form/dist/form";
 import go from "../../history/go";
 
 const form = formrouter((data, method, url) =>
