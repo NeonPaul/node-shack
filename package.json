@@ -65,6 +65,7 @@
     "simplemde": "^1.11.2",
     "style-loader": "0.18.2",
     "sw-precache-webpack-plugin": "0.11.3",
+    "universal-form": "github:neonpaul/querybucket",
     "universal-router": "^3.2.0",
     "url-loader": "0.5.9",
     "webpack": "2.6.1",

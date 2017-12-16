@@ -7,8 +7,8 @@ import ReactDOM from "react-dom/server";
 import auth from "./auth";
 import { default as createStore, SET, setToken } from "../store";
 import api from "./api";
-import parseForm from "form/dist/server";
-import FormData from "form/dist/form-data";
+import parseForm from "querybucket/dist/server";
+import FormData from "querybucket/dist/form-data";
 
 const PORT = process.env.PORT || 3000;
 

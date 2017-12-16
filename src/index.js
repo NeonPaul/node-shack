@@ -8,7 +8,7 @@ import history from "./history";
 import router from "./router";
 import createStore from "./store";
 import { getUser } from "./store";
-import FormData from "form/dist/form-data";
+import FormData from "querybucket/dist/form-data";
 
 const store = createStore();
 
