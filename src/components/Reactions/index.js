@@ -1,21 +1,24 @@
 import React from "react";
+import Form from "../Form";
 
-export default ({ reactionTypes = [], react = () => {}, reactions = [] }) => (
-  <div>
+export default ({ reactionTypes = [], reactions = [], postId }) => (
+  <Form method="post">
+    <input type="hidden" name="postId" value={postId} />
     {reactionTypes.map(type => (
       <button
-        key={type}
+        key={type.id}
         className="button is-small"
-        onClick={() => react(type)}
+        name="react"
+        value={type.id}
       >
         {type.icon} {type.verb}
       </button>
     ))}
     {reactions.map(reaction => (
-      <div>
+      <div key={reaction.user_id}>
         {reaction.type.icon} {reaction.user.user} {reaction.type.context} this
         post.
       </div>
     ))}
-  </div>
+  </Form>
 );

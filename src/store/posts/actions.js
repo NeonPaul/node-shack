@@ -56,3 +56,22 @@ export const updatePost = (id, content, headers = {}) => (dispatch, getState) =>
   })
     .then(res => res.json())
     .then(json => dispatch(updatePostOk(json)));
+
+export const reactPost = (postId, reactionId, headers = {}) => (
+  dispatch,
+  getState
+) => {
+  fetch(url + "/api/posts/" + postId + "/reactions", {
+    headers: {
+      ...headers,
+      authorization: "Bearer " + getToken(getState()),
+      "content-type": "application/json"
+    },
+    method: "POST",
+    body: JSON.stringify({
+      reactionId
+    })
+  })
+    .then(res => res.json())
+    .then(json => dispatch(updatePostOk(json)));
+};

@@ -7,7 +7,6 @@ import ReactDOM from "react-dom/server";
 import auth from "./auth";
 import { default as createStore, SET, setToken } from "../store";
 import api from "./api";
-import postParser from "./post-parser";
 import parseForm from "form/dist/server";
 import FormData from "form/dist/form-data";
 
@@ -72,9 +71,15 @@ function router() {
       const action = route.action || Route.action;
 
       if (action) {
-        await store.dispatch(
+        const redirect = await store.dispatch(
           action(req.method, formData, { cookie: req.headers.cookie })
         );
+
+        if (req.method === "POST") {
+          const redirectUrl =
+            typeof redirect === "string" ? redirect : req.originalUrl;
+          return res.redirect(redirectUrl);
+        }
       }
 
       data.children = ReactDOM.renderToString(

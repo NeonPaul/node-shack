@@ -1,33 +1,39 @@
-import express from 'express'
-import bodyParser from 'body-parser'
-import postRouter from './api/posts/router'
+import express from "express";
+import bodyParser from "body-parser";
+import postRouter from "./api/posts/router";
+import reactionsRouter from "./api/reactions/router";
 
-const api = express.Router()
+const api = express.Router();
 
-api.use(bodyParser.json())
+api.use(bodyParser.json());
 
-function getToken (req) {
-  var token = req.headers.authorization
-  token = token && token.match(/Bearer ([^$]+)$/i)
-  token = (token && token[1]) || null
+function getToken(req) {
+  var token = req.headers.authorization;
+  token = token && token.match(/Bearer ([^$]+)$/i);
+  token = (token && token[1]) || null;
 
-  return token
+  return token;
 }
 
 api.use((req, res, next) => {
-  var token = getToken(req)
+  var token = getToken(req);
   if (!token) {
-    res.status(403).json({ message: 'No token provided' })
-    return
+    res.status(403).json({ message: "No token provided" });
+    return;
   }
 
-  next()
-})
+  next();
+});
 
-api.get('/', (req, res) => {
-  res.send('Ok')
-})
+api.get("/", (req, res) => {
+  res.send("Ok");
+});
 
-api.use('/posts', postRouter)
+api.use("/posts?", postRouter);
+api.use("/reactions?", reactionsRouter);
 
-export default api
+api.use("*", (req, res) => {
+  res.status(404).send("Not found");
+});
+
+export default api;

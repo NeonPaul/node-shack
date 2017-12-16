@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { getUser } from "../../store";
 import { getPosts } from "../../store/posts/selectors";
+import { getReactionTypes } from "../../store/reactions/selectors";
 
 import s from "./root.css";
 import withStyles from "isomorphic-style-loader/lib/withStyles";
@@ -13,7 +14,7 @@ import Form from "../../components/Form";
 const isEditing = (user, post, editId) =>
   String(post.id) === editId && user.id === post.user_id;
 
-const Root = ({ user, posts, edit }) => (
+const Root = ({ user, posts, edit, reactionTypes }) => (
   <div className="root">
     {user.user}
 
@@ -29,6 +30,7 @@ const Root = ({ user, posts, edit }) => (
           key={post.id}
           editing={isEditing(user, post, edit)}
           editable={user.id === post.user_id}
+          reactionTypes={reactionTypes}
         />
       ))}
     </div>
@@ -37,7 +39,8 @@ const Root = ({ user, posts, edit }) => (
 
 const mapStateToProps = state => ({
   user: getUser(state),
-  posts: getPosts(state)
+  posts: getPosts(state),
+  reactionTypes: getReactionTypes(state)
 });
 
 Root.actions = [];

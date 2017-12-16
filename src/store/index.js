@@ -1,10 +1,11 @@
-import { createStore, applyMiddleware } from 'redux'
-import thunk from 'redux-thunk'
-import posts from './posts/reducer'
+import { createStore, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import posts from "./posts/reducer";
+import reactionTypes from "./reactions/reducer";
 /* global BROWSER */
-export const SET = payload => ({ type: SET, payload })
+export const SET = payload => ({ type: SET, payload });
 
-export const setToken = payload => ({ type: setToken, payload })
+export const setToken = payload => ({ type: setToken, payload });
 
 /**
  * This is a reducer, a pure function with (state, action) => state signature.
@@ -18,26 +19,27 @@ export const setToken = payload => ({ type: setToken, payload })
  * follows a different convention (such as function maps) if it makes sense for your
  * project.
  */
-function user (state = BROWSER ? window.initialState : {}, action) {
+function user(state = BROWSER ? window.initialState : {}, action) {
   switch (action.type) {
     case SET:
-      state = Object.assign({}, state, { user: action.payload })
-      break
+      state = Object.assign({}, state, { user: action.payload });
+      break;
     case setToken:
-      state = Object.assign({}, state, { token: action.payload })
-      break
+      state = Object.assign({}, state, { token: action.payload });
+      break;
     default:
-      break
+      break;
   }
 
   return Object.assign({}, state, {
-    posts: posts(state.posts, action)
-  })
+    posts: posts(state.posts, action),
+    reactionTypes: reactionTypes(state.reactionTypes, action)
+  });
 }
 
-export const getUser = (state) => state.user
-export const getToken = (state) => state.token
+export const getUser = state => state.user;
+export const getToken = state => state.token;
 
 // Create a Redux store holding the state of your app.
 // Its API is { subscribe, dispatch, getState }.
-export default () => createStore(user, applyMiddleware(thunk))
+export default () => createStore(user, applyMiddleware(thunk));

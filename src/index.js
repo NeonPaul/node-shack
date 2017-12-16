@@ -31,7 +31,9 @@ class Page extends React.Component {
   }
 
   setRoute(Route) {
-    this.setState({ Route });
+    if (Route !== this.state.Route) {
+      this.setState({ Route });
+    }
   }
 
   render() {
@@ -49,11 +51,7 @@ class Page extends React.Component {
 
 const container = document.getElementById("root");
 
-let currentLocation = history.location;
-let page;
-
 async function getRoute(location, action) {
-  currentLocation = location;
   const state = location.state || {};
 
   try {
@@ -62,8 +60,6 @@ async function getRoute(location, action) {
       query: queryString.parse(location.search),
       user: getUser(store.getState())
     });
-
-    if (currentLocation.key !== location.key) return;
 
     if (route.redirect) {
       history.replace(route.redirect);
@@ -77,7 +73,16 @@ async function getRoute(location, action) {
     if (action) {
       const formData = new FormData(state.body);
       const method = state.method;
-      await store.dispatch(action(method, formData, {}));
+      const redirect = await store.dispatch(action(method, formData, {}));
+
+      if (method === "POST") {
+        const redirectUrl =
+          typeof redirect === "string"
+            ? redirect
+            : location.pathname + location.search;
+        history.replace(redirectUrl);
+        return;
+      }
     }
 
     return Route;
@@ -86,13 +91,15 @@ async function getRoute(location, action) {
   }
 }
 
-getRoute(currentLocation).then(Route => {
+getRoute(history.location).then(Route => {
   const page = ReactDOM.render(<Page route={Route} />, container);
 
   const onLocationChange = async (location, action) => {
     const Route = await getRoute(location, action);
 
-    page.setRoute(Route);
+    if (Route) {
+      page.setRoute(Route);
+    }
   };
 
   let user = getUser(store.getState());

@@ -18,7 +18,7 @@ class Post extends React.Component {
   }
 
   render() {
-    const { post, editing, editable } = this.props;
+    const { post, editing, editable, reactionTypes } = this.props;
 
     return (
       <div className="media">
@@ -36,7 +36,11 @@ class Post extends React.Component {
               <div className="content box">
                 <div dangerouslySetInnerHTML={html(marked(post.content))} />
                 {editable && <a href={"?edit=" + post.id}>Edit</a>}
-                <Reactions postId={post.id} reactions={post.reactions} />
+                <Reactions
+                  postId={post.id}
+                  reactions={post.reactions}
+                  reactionTypes={reactionTypes}
+                />
               </div>
             ) : (
               <Form method="post" action="/">
