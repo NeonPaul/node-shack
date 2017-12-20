@@ -1,3 +1,4 @@
+const webpush = require("./push");
 const knex = require("knex")({
   client: "mysql",
   connection: {
@@ -27,7 +28,7 @@ const User = bookshelf.Model.extend({
   ]
 });
 
-var Post = bookshelf.Model.extend({
+const Post = bookshelf.Model.extend({
   tableName: "posts",
   author: function() {
     return this.belongsTo(User);
@@ -37,7 +38,7 @@ var Post = bookshelf.Model.extend({
   }
 });
 
-var Reaction = bookshelf.Model.extend({
+const Reaction = bookshelf.Model.extend({
   tableName: "response",
   type: function() {
     return this.belongsTo(ReactionType, "response_type_id");
@@ -50,8 +51,25 @@ var Reaction = bookshelf.Model.extend({
   }
 });
 
-var ReactionType = bookshelf.Model.extend({
+const ReactionType = bookshelf.Model.extend({
   tableName: "response_type"
 });
 
-module.exports = { User, Post, ReactionType, Reaction };
+const Subscription = bookshelf.Model.extend({
+  tableName: "subscriptions",
+  user: function() {
+    return this.belongsTo(User);
+  }
+});
+
+const Channel = bookshelf.Model.extend({
+  tableName: "channels",
+  user: function() {
+    return this.belongsTo(User);
+  },
+  push: function(payload) {
+    return webpush.sendNotification(JSON.parse(this.get("data")), payload);
+  }
+});
+
+module.exports = { User, Post, ReactionType, Reaction, Subscription, Channel };

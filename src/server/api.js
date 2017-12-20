@@ -2,6 +2,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import postRouter from "./api/posts/router";
 import reactionsRouter from "./api/reactions/router";
+import subscriptionsRouter from "./api/subscriptions";
+import channelsRouter from "./api/channels";
 
 const api = express.Router();
 
@@ -31,6 +33,8 @@ api.get("/", (req, res) => {
 
 api.use("/posts?", postRouter);
 api.use("/reactions?", reactionsRouter);
+api.use("/channels?", channelsRouter);
+api.use("/subscriptions?", subscriptionsRouter);
 
 api.use("*", (req, res) => {
   res.status(404).send("Not found");
