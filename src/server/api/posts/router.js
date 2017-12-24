@@ -32,6 +32,8 @@ router.post("/", async (req, res, next) => {
 
     await model.refresh({ withRelated: postRelations });
 
+    (await models.Channel.subscribedTo(req.user.id)).map(c => c.push());
+
     res.status(201).send(model);
   } catch (e) {
     next(e);

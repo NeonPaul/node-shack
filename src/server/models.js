@@ -62,14 +62,33 @@ const Subscription = bookshelf.Model.extend({
   }
 });
 
-const Channel = bookshelf.Model.extend({
-  tableName: "channels",
-  user: function() {
-    return this.belongsTo(User);
+const Channel = bookshelf.Model.extend(
+  {
+    tableName: "channels",
+    user: function() {
+      return this.belongsTo(User);
+    },
+    push: function(payload) {
+      return webpush
+        .sendNotification(JSON.parse(this.get("data")), JSON.stringify(payload))
+        .catch(e => {
+          channel.destroy();
+          throw e;
+        });
+    }
   },
-  push: function(payload) {
-    return webpush.sendNotification(JSON.parse(this.get("data")), payload);
+  {
+    subscribedTo(uId) {
+      return this.query(qb => {
+        qb.innerJoin(
+          "subscriptions",
+          "channels.user_id",
+          "subscriptions.user_id"
+        );
+        qb.where("subscriptions.user_id", "<>", req.uId);
+      }).fetchAll();
+    }
   }
-});
+);
 
 module.exports = { User, Post, ReactionType, Reaction, Subscription, Channel };
