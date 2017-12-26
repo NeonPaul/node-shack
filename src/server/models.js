@@ -80,12 +80,7 @@ const Channel = bookshelf.Model.extend(
   {
     subscribedTo(uId) {
       return this.query(qb => {
-        qb.innerJoin(
-          "subscriptions",
-          "channels.user_id",
-          "subscriptions.user_id"
-        );
-        qb.where("subscriptions.user_id", "<>", req.uId);
+        qb.where("channels.user_id", "<>", uId);
       }).fetchAll();
     }
   }

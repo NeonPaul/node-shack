@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.post("/", (req, res) => {
   models.Subscription.forge(({
-    type: req.body.type,
     user_id: req.user.id
   })
   .save()
