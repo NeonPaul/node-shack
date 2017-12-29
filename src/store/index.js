@@ -2,6 +2,7 @@ import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import posts from "./posts/reducer";
 import reactionTypes from "./reactions/reducer";
+import notifications from "./notifications/reducer";
 /* global BROWSER */
 export const SET = payload => ({ type: SET, payload });
 
@@ -33,7 +34,8 @@ function user(state = BROWSER ? window.initialState : {}, action) {
 
   return Object.assign({}, state, {
     posts: posts(state.posts, action),
-    reactionTypes: reactionTypes(state.reactionTypes, action)
+    reactionTypes: reactionTypes(state.reactionTypes, action),
+    notifications: notifications(state.notifications, action)
   });
 }
 
