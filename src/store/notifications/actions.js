@@ -7,7 +7,7 @@ export const subscribe = () => ({
   type: SUBSCRIBE
 })
 
-export const createSubscription = async (data) => (dispatch, getState) => {
+export const createSubscription = (data) => async (dispatch, getState) => {
   await fetch("/api/channels/", getState, {
     method: 'POST',
     body: { data }
@@ -16,6 +16,6 @@ export const createSubscription = async (data) => (dispatch, getState) => {
   dispatch(subscribe())
 }
 
-export const register = async () => (dispatch, getState) => {
+export const register = () => async (dispatch, getState) => {
   dispatch(createSubscription(await swRegister()))
 }

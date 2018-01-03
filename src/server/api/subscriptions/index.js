@@ -4,7 +4,7 @@ import models from "../../models";
 const router = express.Router();
 
 router.post("/", (req, res) => {
-  models.Subscription.forge(({
+  models.Subscription.forge({
     user_id: req.user.id
   })
   .save()

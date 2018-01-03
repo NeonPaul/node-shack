@@ -20,7 +20,7 @@ const isEditing = (user, post, editId) =>
 const Root = ({ user, posts, edit, reactionTypes, enableNotifications, notificationsActive }) => (
   <div className="root">
     {user.user}
-    <Notifications onClick={enableNotifications} active={notificationsActive}>
+    <Notifications onClick={enableNotifications} active={notificationsActive} />
 
     <Form method="post">
       <Editor name="content" value="" />
@@ -56,4 +56,4 @@ const mapDispatchToProps = dispatch => ({
 
 Root.actions = [];
 
-export default connect(mapStateToProps)(withStyles(s)(Root));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(s)(Root));
