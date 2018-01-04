@@ -10,6 +10,7 @@ const paths = require("./paths");
 const postcss = require("./postcss");
 var hotMiddlewareScript =
   "webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true";
+const common = require('./webpack.config.common')
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
@@ -80,6 +81,7 @@ module.exports = {
   module: {
     strictExportPresence: true,
     rules: [
+      common.serviceWorker,
       // TODO: Disable require.ensure as it's not a standard language feature.
       // We are waiting for https://github.com/facebookincubator/create-react-app/issues/2176.
       // { parser: { requireEnsure: false } },
@@ -88,6 +90,7 @@ module.exports = {
       // It's important to do this before Babel processes the JS.
       {
         test: /\.(js|jsx)$/,
+        exclude: common.swExclude,
         enforce: "pre",
         use: [
           {

@@ -72,7 +72,7 @@ const Channel = bookshelf.Model.extend(
       return webpush
         .sendNotification(JSON.parse(this.get("data")), JSON.stringify(payload))
         .catch(e => {
-          channel.destroy();
+          this.destroy();
           throw e;
         });
     }

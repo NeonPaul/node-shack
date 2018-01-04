@@ -27,7 +27,8 @@ export default async (path, getState, { headers, body, ...options }) => {
       ...headers,
       "content-type": "application/json",
       authorization: "Bearer " + getToken(getState())
-    }
+    },
+    body
   });
 
   if (!res.ok) {

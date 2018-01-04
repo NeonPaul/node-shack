@@ -1,4 +1,4 @@
-/*global self, clients*/
+/* global self, clients */
 //import fetch from '../store/fetch'
 
 self.addEventListener("push", event => {
@@ -27,7 +27,7 @@ self.addEventListener("notificationclick", event => {
           }
         }
         if (clients.openWindow) {
-          return clients.openWindow("http://gloveshack.herokuapp.com");
+          return clients.openWindow(self.location.protocol + self.location.host);
         }
       })
   );

@@ -1,3 +1,4 @@
+import registerServiceWorker from '.';
 // https://github.com/mozilla/serviceworker-cookbook/blob/master/push-subscription-management/index.js
 
 // As subscription object is needed in few places let's create a method which
@@ -10,11 +11,7 @@ function getSubscription() {
 
 const register = async () => {
   // Register service worker and check the initial subscription state.
-  if (!("serviceWorker" in navigator)) {
-    throw new Error("Not available");
-  }
-
-  navigator.serviceWorker.register("service-worker.js");
+  await registerServiceWorker()
 
   return getSubscription();
 };
