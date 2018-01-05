@@ -1,4 +1,5 @@
-import fetch from '../fetch';
+import api from '../api'
+import { getToken } from '..';
 import { subscribe as swRegister } from '../../service-worker/register';
 
 export const SUBSCRIBE = "subscribe notification";
@@ -8,10 +9,7 @@ export const subscribe = () => ({
 })
 
 export const createSubscription = (data) => async (dispatch, getState) => {
-  await fetch("/api/channels/", getState, {
-    method: 'POST',
-    body: { data }
-  })
+  await api.notifications.create(getToken(getState()), data)
 
   dispatch(subscribe())
 }

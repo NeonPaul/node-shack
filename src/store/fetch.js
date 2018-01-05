@@ -16,7 +16,7 @@ class FetchError extends Error {
   }
 }
 
-export default async (path, getState, { headers, body, ...options }) => {
+const fetchWithToken = async (path, token, { headers, body, ...options }) => {
   if (typeof body === "object") {
     body = JSON.stringify(body);
   }
@@ -26,7 +26,7 @@ export default async (path, getState, { headers, body, ...options }) => {
     headers: {
       ...headers,
       "content-type": "application/json",
-      authorization: "Bearer " + getToken(getState())
+      authorization: "Bearer " + token
     },
     body
   });
@@ -37,3 +37,7 @@ export default async (path, getState, { headers, body, ...options }) => {
 
   return res.json();
 };
+
+export { fetchWithToken as fetch };
+
+export default (path, getState, options) => fetchWithToken(path, getToken(getState()), options);
