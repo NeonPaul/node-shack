@@ -1,13 +1,18 @@
 /* global self, clients */
-//import fetch from '../store/fetch'
+import api from '../api'
+import localForage from 'localforage';
 
 self.addEventListener("push", event => {
   event.waitUntil(self.registration.showNotification("New Gloveshack Post"));
 });
 
 self.addEventListener("pushsubscriptionchange", event => {
+  const token = localForage.getItem('authToken')
   // https://github.com/mozilla/serviceworker-cookbook/blob/master/push-subscription-management/service-worker.js
-  //event.waitUntil(notifications.subscribe().then(sub => fetch));
+  event.waitUntil(async () => {
+    const data = await self.registration.pushManager.subscribe({ userVisibleOnly: true })
+    await api.notifications.create(token, data)
+  });
 });
 
 self.addEventListener("notificationclick", event => {

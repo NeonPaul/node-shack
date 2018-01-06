@@ -1,4 +1,5 @@
 import { createStore, applyMiddleware } from "redux";
+import localForage from "localforage";
 import thunk from "redux-thunk";
 import posts from "./posts/reducer";
 import reactionTypes from "./reactions/reducer";
@@ -6,7 +7,10 @@ import notifications from "./notifications/reducer";
 /* global BROWSER */
 export const SET = payload => ({ type: SET, payload });
 
-export const setToken = payload => ({ type: setToken, payload });
+export const setToken = payload => dispatch => {
+  localForage.set('authToken', payload)
+  dispatch({ type: setToken, payload })
+};
 
 /**
  * This is a reducer, a pure function with (state, action) => state signature.
