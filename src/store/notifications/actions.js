@@ -1,19 +1,19 @@
-import api from '../api'
-import { getToken } from '..';
-import { subscribe as swRegister } from '../../service-worker/register';
+import api from "../../api";
+import { getToken } from "..";
+import { subscribe as swRegister } from "../../service-worker/register";
 
 export const SUBSCRIBE = "subscribe notification";
 
 export const subscribe = () => ({
   type: SUBSCRIBE
-})
+});
 
-export const createSubscription = (data) => async (dispatch, getState) => {
-  await api.notifications.create(getToken(getState()), data)
+export const createSubscription = data => async (dispatch, getState) => {
+  await api.notifications.create(getToken(getState()), data);
 
-  dispatch(subscribe())
-}
+  dispatch(subscribe());
+};
 
 export const register = () => async (dispatch, getState) => {
-  dispatch(createSubscription(await swRegister()))
-}
+  dispatch(createSubscription(await swRegister()));
+};

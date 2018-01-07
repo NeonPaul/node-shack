@@ -1,5 +1,4 @@
-import fetchPonyfill from "fetch-ponyfill";
-import { getToken } from ".";
+// import fetchPonyfill from "fetch-ponyfill";
 
 const { fetch } = fetchPonyfill();
 /* global BROWSER */
@@ -39,5 +38,3 @@ const fetchWithToken = async (path, token, { headers, body, ...options }) => {
 };
 
 export { fetchWithToken as fetch };
-
-export default (path, getState, options) => fetchWithToken(path, getToken(getState()), options);
