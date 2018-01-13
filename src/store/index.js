@@ -4,12 +4,14 @@ import thunk from "redux-thunk";
 import posts from "./posts/reducer";
 import reactionTypes from "./reactions/reducer";
 import notifications from "./notifications/reducer";
+import api from "./api";
 /* global BROWSER */
 export const SET = payload => ({ type: SET, payload });
 
 export const setToken = payload => dispatch => {
-  localForage.set('authToken', payload)
-  dispatch({ type: setToken, payload })
+  localForage.set("authToken", payload);
+  api.setToken(payload);
+  dispatch({ type: setToken, payload });
 };
 
 /**

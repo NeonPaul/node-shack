@@ -8,12 +8,15 @@ self.addEventListener("push", event => {
 
 self.addEventListener("pushsubscriptionchange", event => {
   const token = localForage.getItem("authToken");
+  api.setToken(token);
+
   // https://github.com/mozilla/serviceworker-cookbook/blob/master/push-subscription-management/service-worker.js
   event.waitUntil(async () => {
     const data = await self.registration.pushManager.subscribe({
       userVisibleOnly: true
     });
-    await api.notifications.create(token, data);
+
+    await api.notifications.create(data);
   });
 });
 

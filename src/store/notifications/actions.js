@@ -1,4 +1,4 @@
-import api from "../../api";
+import api from "../api";
 import { getToken } from "..";
 import { subscribe as swRegister } from "../../service-worker/register";
 
@@ -9,7 +9,7 @@ export const subscribe = () => ({
 });
 
 export const createSubscription = data => async (dispatch, getState) => {
-  await api.notifications.create(getToken(getState()), data);
+  await api.notifications.create(data);
 
   dispatch(subscribe());
 };
