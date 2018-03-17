@@ -33,7 +33,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vbox.customize ["modifyvm", :id, "--memory", 1024]
   end
 
-  config.vm.provision :shell, :path => "init.sh"
-  config.vm.provision "file", source: "./shack.sql", destination: "shack.sql"
-  config.vm.provision "shell", path: "bootstrap.sh"
+  config.vm.synced_folder "./vagrant", "/vagrant"
+
+  config.vm.provision :shell, :path => "./vagrant/init.sh"
+  config.vm.provision "file", source: "./vagrant/shack.sql", destination: "shack.sql"
+  config.vm.provision "shell", path: "./vagrant/bootstrap.sh"
 end

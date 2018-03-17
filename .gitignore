@@ -21,3 +21,8 @@ yarn-debug.log*
 yarn-error.log*
 
 config/env.sh
+
+.vagrant
+
+ubuntu-xenial-16.04-cloudimg-console.log
+

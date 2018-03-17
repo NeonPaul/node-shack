@@ -2,7 +2,9 @@
 
 apt-get update > /dev/null
 
-apt-get -y install make
+apt-get -y install make gcc
+
+[ -e /opt/redis ] && rm -rf /opt/redis
 
 mkdir /opt/redis
 
