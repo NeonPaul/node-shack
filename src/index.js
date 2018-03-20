@@ -8,7 +8,6 @@ import history from "./history";
 import router from "./router";
 import createStore from "./store";
 import { getUser } from "./store";
-import FormData from "universal-form/dist/form-data";
 
 const store = createStore();
 
@@ -71,7 +70,10 @@ async function getRoute(location, action) {
     const action = route.action || Route.action;
 
     if (action) {
-      const formData = new FormData(state.body);
+      const formData = new FormData();
+      if (state.body) {
+        state.body.forEach(([key, value]) => formData.append(key, value))
+      }
       const method = state.method;
       const redirect = await store.dispatch(action(method, formData, {}));
 

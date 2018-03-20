@@ -1,15 +1,13 @@
 import React from "react";
-import formrouter from "universal-form/dist/form";
 import go from "../../history/go";
-
-const form = formrouter((data, method, url) =>
-  go(url, { body: data.toJSON(), method: method.toUpperCase() })
-);
 
 export default class Form extends React.Component {
   remover = null;
 
   formInit = el => {
+    const form = require("isomorphic-form/dist/form")((data, method, url) =>
+      go(url, { body: data.toJSON(), method: method.toUpperCase() })
+    )
     if (this.remover) {
       this.remover();
       this.remover = null;
