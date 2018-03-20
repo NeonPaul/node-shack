@@ -7,8 +7,7 @@ import ReactDOM from "react-dom/server";
 import auth from "./auth";
 import { default as createStore, SET, setToken } from "../store";
 import api from "./api";
-import parseForm from "universal-form/dist/server";
-import FormData from "universal-form/dist/form-data";
+import parseForm from "isomorphic-form/dist/server";
 
 const PORT = process.env.PORT || 3000;
 
