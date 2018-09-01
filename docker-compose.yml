@@ -1,0 +1,11 @@
+mysql:
+  image: mysql
+  ports:
+    - "3306:3306"
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_USER: db_user
+    MYSQL_PASSWORD: db_pass
+    MYSQL_DATABASE: shack
+  volumes:
+    - ./docker/mysql:/docker-entrypoint-initdb.d
