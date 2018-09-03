@@ -6,6 +6,7 @@ const models = require("./models");
 const PasswordHash = require("phpass").PasswordHash;
 const passwordHash = new PasswordHash();
 const FacebookStrategy = require("passport-facebook");
+const getenv = require("getenv");
 
 function getUser(email) {
   return models.User.where("email", email).fetch();
@@ -16,7 +17,24 @@ function createUser(email, user) {
   return models.User.forge({ email, user }).save();
 }
 
-export default app => {
+const [
+  FB_APP_ID,
+  FB_APP_SECRET,
+  ROOT_URL,
+  NODE_ENV,
+  REDIS_URL,
+  SESSION_SECRET
+] = [
+  ["FB_APP_ID", "none"],
+  ["FB_APP_SECRET", "none"],
+  ["ROOT_URL", "/"],
+  ["NODE_ENV", "development"],
+  ["REDIS_URL", "localhost"],
+  ["SESSION_SECRET", "keyboard cat"]
+].map(k => getenv(...k))
+
+module.exports = app => {
+  console.log('using')
   passport.use(
     new Strategy(async function(email, password, cb) {
       try {
@@ -95,22 +113,6 @@ export default app => {
   // logging, parsing, and session handling.
   const sessionConfig = {};
 
-  const [
-    FB_APP_ID,
-    FB_APP_SECRET,
-    ROOT_URL,
-    NODE_ENV,
-    REDIS_URL,
-    SESSION_SECRET
-  ] = [
-    ["FB_APP_ID"],
-    ["FB_APP_SECRET"],
-    ["ROOT_URL"],
-    ["NODE_ENV"],
-    ["REDIS_URL"],
-    ["SESSION_SECRET", "keyboard cat"]
-  ].map(k => getenv(...k))
-
   if (NODE_ENV === "production") {
     sessionConfig.store = new RedisStore({
       url: REDIS_URL
@@ -150,7 +152,7 @@ export default app => {
   );
 
   app.get(
-    cfg.fbAuthPath,
+    '/fb-login',
     passport.authenticate("facebook", { failureRedirect: "/" }),
     authSuccess
   );

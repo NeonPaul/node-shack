@@ -1,15 +1,19 @@
 const webpack = require('webpack');
 const middleware = require('webpack-dev-middleware');
+const express = require('express');
 const api = require('./api');
+
+const auth = require('./auth');
+
+const app = express();
+
+auth(app);
 
 const compiler = webpack({
   ...require('../webpack.config.js'),
   mode: 'development'
 });
 
-
-const express = require('express');
-const app = express();
 app.use('/api', api);
 app.use(middleware(compiler));
 
