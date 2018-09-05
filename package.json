@@ -5,22 +5,22 @@
   "main": "index.js",
   "dependencies": {
     "bookshelf": "^0.13.3",
-    "connect-redis": "^3.3.3",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.3",
-    "express-session": "^1.15.6",
+    "form-collect": "^1.1.2",
+    "fromentries": "^1.0.3",
     "getenv": "^0.7.0",
+    "jsonwebtoken": "^8.3.0",
     "knex": "^0.15.2",
     "marked": "^0.5.0",
     "mysql": "^2.16.0",
+    "mysql2": "^1.6.1",
     "parcel-bundler": "^1.9.7",
-    "passport": "^0.4.0",
-    "passport-facebook": "^2.1.1",
-    "passport-local": "^1.0.0",
     "phpass": "^0.1.1",
     "react": "^15.6.2",
     "react-dom": "^15.6.2",
-    "simplemde": "^1.11.2"
+    "simplemde": "^1.11.2",
+    "sql-tag": "^1.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
@@ -34,7 +34,7 @@
     "webpack-dev-middleware": "^3.2.0"
   },
   "scripts": {
-    "start": "node server/dev",
+    "start": "NODE_ENV=development node server",
     "start-prod": "webpack && node server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

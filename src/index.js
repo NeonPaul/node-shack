@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Main from './components/main'
+import Main from './components/main';
+import Login from './components/login';
 
 const user = {
   user: 'Paul'
@@ -23,9 +24,23 @@ const post = {
   }]
 }
 
+class App extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      token: null
+    };
+  }
+
+  render () {
+    return <div>
+      { this.state.token ? <Main user={user} posts={[post]} /> : <Login /> }
+    </div>
+  }
+}
+
 ReactDOM.render(
-  <div>
-    <Main user={user} posts={[post]} />
-  </div>,
+  <App />,
   document.getElementById('root')
 )
