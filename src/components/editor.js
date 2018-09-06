@@ -1,7 +1,5 @@
 import React from 'react';
 
-import SimpleMDE from "simplemde";
-
 export default class Editor extends React.Component {
   constructor(...args) {
     super(...args);
@@ -10,7 +8,9 @@ export default class Editor extends React.Component {
     this.onTextChange = this.onTextChange.bind(this);
   }
 
-  mounted(el) {
+  async mounted(el) {
+    const { default: SimpleMDE } = await import("simplemde");
+
     if (!el) {
       this.unmounted();
       return;

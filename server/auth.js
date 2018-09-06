@@ -21,6 +21,10 @@ module.exports = async (req, res, next) => {
     const [ results ] = await pool.query(sql`SELECT user, email FROM users WHERE email=${email}`);
     if (results && results[0]) {
       req.user = results[0];
+      res.state.user = {
+        user: req.user.user,
+        email: req.user.email,
+      }
     }
 
     next();
