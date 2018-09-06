@@ -9,6 +9,7 @@ export default class Editor extends React.Component {
   }
 
   async mounted(el) {
+    this.el = el;
     const { default: SimpleMDE } = await import("simplemde");
 
     if (!el) {
@@ -24,10 +25,15 @@ export default class Editor extends React.Component {
       status: false
     });
 
+    this.mde.codemirror.on("keyup", this.onTextChange);
     this.mde.codemirror.on("change", this.onTextChange);
   }
 
   onTextChange() {
+    if (this.el) {
+      this.el.value = this.mde.value();
+    }
+
     if (this.props.onChange) {
       this.props.onChange(this.mde.value());
     }
@@ -35,6 +41,7 @@ export default class Editor extends React.Component {
 
   unmounted() {
     if (this.mde) {
+      this.mde.codemirror.off("keyup", this.onTextChange);
       this.mde.codemirror.off("change", this.onTextChange);
       this.mde = null;
     }

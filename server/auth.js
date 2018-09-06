@@ -18,12 +18,12 @@ module.exports = async (req, res, next) => {
     // TODO: Do all this work one time only then store in session
     const { email } = jwt.verify(token, JWT_SECRET);
 
-    const [ results ] = await pool.query(sql`SELECT user, email FROM users WHERE email=${email}`);
+    const [ results ] = await pool.query(sql`SELECT user, id, email FROM users WHERE email=${email}`);
     if (results && results[0]) {
       req.user = results[0];
       res.state.user = {
         user: req.user.user,
-        email: req.user.email,
+        email: req.user.email
       }
     }
 

@@ -15,7 +15,6 @@ router.use('/login', login);
 
 loggedIn.use((req, res, next) => {
   if (!req.user) {
-    console.log('nope');
     next({ noauth: true });
     return;
   }

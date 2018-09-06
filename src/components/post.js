@@ -2,6 +2,7 @@ import React from "react";
 import marked from "marked";
 import Editor from "./editor";
 import Reactions from "./reactions";
+import Form from "./form";
 
 const html = __html => ({ __html });
 
@@ -40,7 +41,7 @@ export default class Post extends React.Component {
                 />
               </div>
             ) : (
-              <form method="post" action="/">
+              <Form method="post" action="/">
                 <Editor
                   value={this.state.content}
                   onChange={content => this.setState({ content })}
@@ -53,7 +54,7 @@ export default class Post extends React.Component {
                 >
                   Save
                 </button>
-              </form>
+              </Form>
             )}
           </div>
         </div>

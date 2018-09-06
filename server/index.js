@@ -40,8 +40,13 @@ if (NODE_ENV === 'development') {
 
 app.use(async (req, res, next) => {
   try {
-    if(!req.accepts('text/html')) {
+    if(/*!req.found || */!req.accepts('text/html')) {
       return next();
+    }
+
+    if(res.hasHeader('location')) {
+      res.sendStatus(302);
+      return;
     }
 
     const App =
@@ -76,6 +81,11 @@ app.use(async (req, res, next) => {
 
 app.use((req, res, next) => {
   if(req.found) {
+    if(res.hasHeader('location')) {
+      res.sendStatus(302);
+      return;
+    }
+
     res.json(res.state);
   } else {
     next();
