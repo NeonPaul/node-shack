@@ -17,10 +17,7 @@ export default ({ user, posts }) => (
         <Post
           post={post}
           key={post.id}
-          reactionTypes={[{
-            icon: '+1',
-            verb: 'Like'
-          }]}
+          reactionTypes={[]}
         />
       ))}
     </div>
