@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 
 const login = require('./login');
 const main = require('./main');
+const notifications = require('./notifications');
 
 const router = express.Router();
 const loggedIn = express.Router();
@@ -23,6 +24,7 @@ loggedIn.use((req, res, next) => {
 });
 
 loggedIn.use(main);
+loggedIn.use('/notifications?', notifications);
 
 loggedIn.use((err, req, res, next) => {
   if (err.noauth) {
