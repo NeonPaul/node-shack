@@ -2,6 +2,7 @@ const exporess = require('express');
 const sql = require('sql-tag');
 
 const pool = require('../db');
+const push = require('../push');
 
 const route = new exporess.Router();
 const nested = opts => { opts.nestTables = true; return opts; }
@@ -50,10 +51,21 @@ route.post('/',  async (req, res, next) => {
     );
 
     res.state.posts = await fetchPosts();
+
     req.found = true;
     res.location('/');
 
     next();
+
+    // Notifications
+    const [ channels ] = await pool.query(
+      sql`SELECT data FROM channels WHERE channels.user_id != ${ req.user.id }`
+    );
+    const { data } = channels[0];
+    const payload = JSON.stringify({});
+
+    push.sendNotification(JSON.parse(data), payload)
+
   } catch(e) {
     next(e);
   }

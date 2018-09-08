@@ -21,7 +21,8 @@
     "react-dom": "^16.4.2",
     "simplemde": "^1.11.2",
     "sql-tag": "^1.0.1",
-    "stream-template": "0.0.10"
+    "stream-template": "0.0.10",
+    "web-push": "^3.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
@@ -37,7 +38,8 @@
   "scripts": {
     "start": "NODE_ENV=development node server",
     "start-prod": "webpack --config webpack.config.js --config webpack.server.config.js && node server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vapid": "node scripts/vapid"
   },
   "repository": {
     "type": "git",
