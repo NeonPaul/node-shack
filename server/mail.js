@@ -12,6 +12,7 @@ const transport = nodemailer.createTransport({
 
 module.exports = {
   send(options) {
+    options.from = `"Paul Kiddle" <paul@mrkiddle.co.uk>`
     return new Promise((res, rej) => {
       transport.sendMail(options, (err, rtn) => {
         if(err) {
