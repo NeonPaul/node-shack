@@ -12,7 +12,14 @@ class App extends React.Component {
 
   render () {
     return <State.Provider value={(v) => this.setState(v)}>
-      { this.state.user ? <Main user={this.state.user} posts={this.state.posts || []} /> : <Login /> }
+      {
+        this.state.user ?
+          <Main user={this.state.user}
+                posts={this.state.posts || []}
+                subscribed={this.state.subscribed || false}
+                pushAvailable={this.state.pushAvailable || false }/> :
+          <Login />
+      }
     </State.Provider>
   }
 }

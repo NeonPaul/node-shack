@@ -2,13 +2,17 @@ import React from 'react';
 import Editor from "./editor";
 import Post from './post';
 import Form from "./form";
-import { subscribe } from "../service-worker";
+import { subscribe, unsubscribe } from "../service-worker";
 
-export default ({ user, posts }) => (
+export default ({ user, posts, subscribed, pushAvailable }) => (
   <div>
     <div>
       { user.user }
-      <button onClick={subscribe}>Enable Notifications</button>
+      { pushAvailable && (
+          !subscribed ?
+            <button onClick={subscribe}>Enable Notifications</button> :
+            <button onClick={unsubscribe}>Disable Notifications</button>
+      ) }
     </div>
 
     <Form method="post">
