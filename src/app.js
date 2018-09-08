@@ -12,6 +12,7 @@ class App extends React.Component {
 
   render () {
     return <State.Provider value={(v) => this.setState(v)}>
+      <div>{ this.state.message || '' }</div>
       {
         this.state.user ?
           <Main user={this.state.user}

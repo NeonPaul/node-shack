@@ -45,7 +45,7 @@ route.post('/',  async (req, res, next) => {
       throw new Error('User or password is empty');
     }
 
-    const result = await getUser();
+    const result = await getUser(user);
 
     if (!passwordHash.checkPassword(password, result.password)) {
       throw new Error('Password incorrect');
@@ -68,24 +68,57 @@ route.post('/reset', async (req, res, next) => {
       user: result.user
     }, result.password, { expiresIn: '1d' });
 
-    res.send(`<a href="/login/reset?token=${token}">Reset</a>`);
+    res.state.message = `/login/reset?token=${token}`;
+    req.found = 1;
+    next();
   }catch(e) {
     next(e)
   }
 });
 
+const verifyToken = async (t) => {
+  const token = jwt.decode(t);
+
+  const user = await getUser(token.user);
+
+  jwt.verify(t, user.password);
+
+  return user;
+}
+
 route.get('/reset', async (req, res, next) => {
   try {
-    const token = jwt.decode(req.query.token);
+    await verifyToken(req.query.token);
 
-    const user = await getUser(token.user);
+    res.send(`<form method=post action="/login/change">
+      <input type=hidden name=token value="${req.query.token}">
+      New password <input type=password name=password><br>
+      New password (repeat) <input type=password name=passwordRepeat><br>
+      <button>Change</button>
+    </form>`);
+  }catch(e) {
+    next(e)
+  }
+});
 
-    jwt.verify(req.query.token, user.password);
+route.post('/change', async (req, res, next) => {
+  try {
+    const user = await verifyToken(req.body.token);
+
+    const { password, passwordRepeat } = req.body;
+
+    if (password !== passwordRepeat) {
+      throw new Error('Passwords do not match');
+    }
+
+    const hash = passwordHash.hashPassword(password);
+
+    await pool.query(sql`UPDATE users SET password=${hash} WHERE id=${user.id}`);
 
     login(user, req, res);
     next();
-  }catch(e) {
-    next(e)
+  } catch (e) {
+    next(e);
   }
 });
 

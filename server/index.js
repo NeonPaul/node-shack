@@ -101,5 +101,13 @@ app.use((req, res, next) => {
   }
 });
 
+app.use((err, req, res, next) => {
+  if(req.accepts('application/json')) {
+    res.json({ message: err.toString() })
+  } else {
+    next(e);
+  }
+});
+
 // Start app
 app.listen(PORT, () => console.log(`app listening on port ${PORT}`));

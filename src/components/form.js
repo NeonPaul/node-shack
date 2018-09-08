@@ -23,10 +23,17 @@ class Form extends React.Component {
       body: JSON.stringify(data),
       credentials: 'same-origin',
       redirect: 'follow'
-    }).then(res => res.json()).then(state => {
+    }).then(res =>
+      res.headers.get('Content-Type').indexOf('json') > 0 ?
+      res.json() :
+      res.text().then(m => ({ message: m  }))
+    ).then(state => {
       this.props.setState(state);
     }).catch(e => {
       console.log(e);
+      this.props.setState({
+        message: e.toString()
+      })
     });
     e.preventDefault();
   }
