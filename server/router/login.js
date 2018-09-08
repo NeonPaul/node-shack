@@ -73,7 +73,6 @@ route.post('/reset', async (req, res, next) => {
     const resetLink = `${baseUrl}/login/reset?token=${token}`;
 
     const mailOptions = {
-      from: '"Paul Kiddle" <neonpaul@gmail.com>', // sender address
       to: `"${user.user}" <${user.email}>`, // list of receivers
       subject: 'Password reset link', // Subject line
       text: `Hi ${user.user}, here is your password reset link for the glove shack:
@@ -82,9 +81,9 @@ ${resetLink}`, // plain text body
             <p><a href="${resetLink}">${resetLink}</a></p>` // html body
     };
 
-    await mail.send(mailOptions);
+    console.log(await mail.send(mailOptions));
 
-    res.state.message = `Reset email sent, please check your inbox (${user.email.replace(/\B.\B/g, '*')})`;
+    res.state.message = `Reset email sent, please check your inbox (${user.email.replace(/\B.\B/g, '*')}). It could take 5 to 10 minutes to be delivered.`;
     req.found = 1;
     next();
   }catch(e) {
