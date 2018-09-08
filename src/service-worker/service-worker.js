@@ -1,5 +1,7 @@
 import { subscribe } from './notifications';
 
+console.log(self.location)
+
 self.addEventListener('install', function(event) {
   // The promise that skipWaiting() returns can be safely ignored.
   self.skipWaiting();
@@ -37,9 +39,7 @@ self.addEventListener("notificationclick", event => {
           }
         }
         if (clients.openWindow) {
-          return clients.openWindow(
-            self.location.protocol + self.location.host
-          );
+          return clients.openWindow('/');
         }
       })
   );
