@@ -2,7 +2,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /service-worker\/index\.js/,
+        test: /service-worker\.js/,
         use: [{
           loader: 'service-worker-loader',
           options: {
@@ -14,7 +14,7 @@ module.exports = {
         test: /\.js$/,
         exclude: [
           /node_modules/,
-          /service-worker\/index\.js/,
+          /service-worker\.js/,
         ],
         use: {
           loader: "babel-loader"

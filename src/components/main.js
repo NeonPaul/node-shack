@@ -2,23 +2,7 @@ import React from 'react';
 import Editor from "./editor";
 import Post from './post';
 import Form from "./form";
-
-const subscribe = async () => {
-  const { subscribe } = await import("../service-worker/register");
-  const data = await subscribe();
-  await fetch('/notifications', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      data: JSON.stringify(data)
-    }),
-    credentials: 'same-origin',
-    redirect: 'follow'
-  })
-}
+import { subscribe } from "../service-worker";
 
 export default ({ user, posts }) => (
   <div>
