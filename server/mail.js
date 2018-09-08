@@ -6,7 +6,7 @@ const transport = nodemailer.createTransport({
   port: getenv('SMTP_PORT', '587'),
   auth: {
     user: getenv('SMTP_USER', 'bvdlrevckprxajnl@ethereal.email'),
-    pass: getenv('SMTP_PORT', 'qMQ6hu4QUyhZ6gJeax')
+    pass: getenv('SMTP_PASS', 'qMQ6hu4QUyhZ6gJeax')
   }
 });
 
