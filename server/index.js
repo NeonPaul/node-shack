@@ -71,6 +71,9 @@ app.use(async (req, res, next) => {
       <head>
         <meta charset="utf-8">
         <link rel="manifest" href="/manifest.json">
+        <style type="text/css">
+        ${require('fs').createReadStream(require.resolve('./styles.css'))}
+        </style>
         <script>
         window.__INITIAL_STATE__ = ${JSON.stringify(res.state)};
         const envs = ${JSON.stringify(envs)};
