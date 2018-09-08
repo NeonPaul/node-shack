@@ -2,7 +2,7 @@ const exporess = require('express');
 const sql = require('sql-tag');
 
 const pool = require('../db');
-const push = require('../push');
+const { webpush } = require('../push');
 
 const route = new exporess.Router();
 const nested = opts => { opts.nestTables = true; return opts; }
@@ -72,7 +72,7 @@ route.post('/',  async (req, res, next) => {
           remove.push(id);
           continue;
         }
-        await push.sendNotification(parsed, payload);
+        await webpush.sendNotification(parsed, payload);
       } catch(e) {
         if(e.statusCode === 410) {
           remove.push(id);

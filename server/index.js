@@ -60,12 +60,21 @@ app.use(async (req, res, next) => {
       state: res.state
     });
 
+    const { vapidKeys } = require('./push');
+
+    const envs = {
+      VAPID_PUBLIC: vapidKeys.public
+    };
+
     ST`<!doctype HTML>
     <html lang="en">
       <head>
         <meta charset="utf-8">
+        <link rel="manifest" href="/manifest.json">
         <script>
         window.__INITIAL_STATE__ = ${JSON.stringify(res.state)};
+        const envs = ${JSON.stringify(envs)};
+        window.getenv = key => envs[key];
         </script>
       </head>
       <body>

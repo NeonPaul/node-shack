@@ -7,7 +7,10 @@ subCallbacks.call = function (arg) {
 }
 
 export const subscribe = async () => {
-  const n = notifications.subscribe(await registerServiceWorker());
+  await registerServiceWorker();
+  const n = notifications.subscribe(await navigator.serviceWorker.ready, {
+    applicationServerKey: Buffer.from(window.getenv('VAPID_PUBLIC'), 'base64'),
+  });
   subCallbacks.call(true);
   return n;
 }

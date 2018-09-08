@@ -1,12 +1,23 @@
 import { subscribe } from './notifications';
 
+self.addEventListener('install', function(event) {
+  // The promise that skipWaiting() returns can be safely ignored.
+  self.skipWaiting();
+
+  // Perform any other actions required for your
+  // service worker to install, potentially inside
+  // of event.waitUntil();
+});
+
 self.addEventListener("push", event => {
   event.waitUntil(self.registration.showNotification("New Gloveshack Post"));
 });
 
-self.addEventListener("pushsubscriptionchange", async event => {
-  // https://github.com/mozilla/serviceworker-cookbook/blob/master/push-subscription-management/service-worker.js
-  event.waitUntil(() => subscribe(self.registration));
+self.addEventListener("pushsubscriptionchange", event => {
+  event.waitUntil(async () => {
+    // https://github.com/mozilla/serviceworker-cookbook/blob/master/push-subscription-management/service-worker.js
+    return subscribe(self.registration, event.oldSubscription && event.oldSubscription.options)
+  });
 });
 
 self.addEventListener("notificationclick", event => {

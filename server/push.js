@@ -12,4 +12,7 @@ webpush.setVapidDetails(
   vapidKeys.private
 );
 
-module.exports = webpush;
+module.exports = {
+  webpush,
+  vapidKeys
+};

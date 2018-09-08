@@ -12,11 +12,16 @@ function getSubscription() {
 // subscription using `registration.pushManager.subscribe`. Then
 // register received new subscription by sending a POST request with its
 // endpoint to the server.
-export const subscribe = async registration => {
+export const subscribe = async (registration, options = {}) => {
   if (!registration) {
     throw new Error('You have to register a service worker first');
   }
-  const data = await registration.pushManager.subscribe({ userVisibleOnly: true });
+
+  options = options || {};
+
+  options.userVisibleOnly = true;
+
+  const data = await registration.pushManager.subscribe(options);
 
   return fetch('/notifications', {
     method: 'POST',
