@@ -5,10 +5,14 @@ const jwt = require("jsonwebtoken");
 const getenv = require("getenv");
 
 const pool = require('../db');
+const mail = require('../mail');
 
 const passwordHash = new PasswordHash();
 const route = new exporess.Router();
+
 const JWT_SECRET = getenv("JWT_SECRET", "big secret");
+const baseUrl = getenv('BASE_URL', 'http://localhost:3000');
+
 const getUser = async user => {
   const [ results ] = await pool.query(sql`SELECT * FROM users WHERE email=${user} OR user=${user}`);
 
@@ -60,15 +64,27 @@ route.post('/',  async (req, res, next) => {
 
 route.post('/reset', async (req, res, next) => {
   try {
-    const { user } = req.body;
-
-    const result = await getUser(user);
+    const user = await getUser(req.body.user);
 
     const token = jwt.sign({
-      user: result.user
-    }, result.password, { expiresIn: '1d' });
+      user: user.user
+    }, user.password, { expiresIn: '1d' });
 
-    res.state.message = `/login/reset?token=${token}`;
+    const resetLink = `${baseUrl}/login/reset?token=${token}`;
+
+    const mailOptions = {
+      from: '"Paul Kiddle" <neonpaul@gmail.com>', // sender address
+      to: `"${user.user}" <${user.email}>`, // list of receivers
+      subject: 'Password reset link', // Subject line
+      text: `Hi ${user.user}, here is your password reset link for the glove shack:
+${resetLink}`, // plain text body
+      html: `<p>Hi ${user.user}, here is your password reset link for the glove shack:</p>
+            <p><a href="${resetLink}">${resetLink}</a></p>` // html body
+    };
+
+    await mail.send(mailOptions);
+
+    res.state.message = `Reset email sent, please check your inbox (${user.email.replace(/\B.\B/g, '*')})`;
     req.found = 1;
     next();
   }catch(e) {
