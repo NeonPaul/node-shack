@@ -69,6 +69,7 @@ app.use(async (req, res, next) => {
     ST`<!doctype HTML>
     <html lang="en">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta charset="utf-8">
         <link rel="manifest" href="/manifest.json">
         <style type="text/css">

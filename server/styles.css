@@ -35,7 +35,7 @@ body {
 .media {
   display: flex;
   border-radius: 2em;
-  /*background: $light;*/
+  background: #d8d78f;
   margin: 1em;
 }
 
@@ -71,16 +71,16 @@ h1 {
 
 body {
   font-family: 'Open Sans', sans-serif;
-  /*color: $dark;
-  background: $highlight;*/
+  color: #4f3130;
+  background: #d8bd8a;
 }
 
 /* Button */
 .Button {
   display: inline-block;
   color: white;
-  /*background: $bold;
-  border: 5px solid $bold;*/
+  background: #753742;
+  border: 5px solid #753742;
   border-radius: 2em;
   padding: 1em;
   margin: 1em;
@@ -91,7 +91,7 @@ body {
 
 .Button:hover {
   background: white;
-  /*color: $bold;*/
+  color: #753742;
 }
 
 /* Login */
@@ -104,7 +104,7 @@ body {
 }
 
 .Login__content {
-  /*background: $light;*/
+  background: #d8d78f;
   padding: 2em;
   border-radius: 1em;
   text-align: center;
