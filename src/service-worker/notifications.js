@@ -16,7 +16,7 @@ export const subscribe = async registration => {
   if (!registration) {
     throw new Error('You have to register a service worker first');
   }
-  const data = registration.pushManager.subscribe({ userVisibleOnly: true });
+  const data = await registration.pushManager.subscribe({ userVisibleOnly: true });
 
   return fetch('/notifications', {
     method: 'POST',

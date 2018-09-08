@@ -59,13 +59,33 @@ route.post('/',  async (req, res, next) => {
 
     // Notifications
     const [ channels ] = await pool.query(
-      sql`SELECT data FROM channels WHERE channels.user_id != ${ req.user.id }`
+      sql`SELECT data, id FROM channels WHERE channels.user_id != ${ req.user.id }`
     );
-    const { data } = channels[0];
-    const payload = JSON.stringify({});
 
-    push.sendNotification(JSON.parse(data), payload)
+    const payload = "{}";
+    const remove = [];
 
+    for(const { data, id } of channels) {
+      try {
+        const parsed = JSON.parse(data);
+        if(!parsed.endpoint) {
+          remove.push(id);
+          continue;
+        }
+        await push.sendNotification(parsed, payload);
+      } catch(e) {
+        if(e.statusCode === 410) {
+          remove.push(id);
+        } else {
+          console.log(data);
+          console.log(e);
+        }
+      }
+    }
+
+    if(remove.length) {
+      await pool.query(sql `DELETE FROM channels WHERE id IN (${remove})`);
+    }
   } catch(e) {
     next(e);
   }
