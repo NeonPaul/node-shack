@@ -18,7 +18,8 @@ class App extends React.Component {
           <Main user={this.state.user}
                 posts={this.state.posts || []}
                 subscribed={this.state.subscribed || false}
-                pushAvailable={this.state.pushAvailable || false }/> :
+                pushAvailable={this.state.pushAvailable || false }
+                reactionTypes={this.state.reactionTypes || [] }/> :
           <Login />
       }
     </State.Provider>

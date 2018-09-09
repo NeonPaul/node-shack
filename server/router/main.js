@@ -11,29 +11,54 @@ const fetchPosts = async () => {
   const [ posts ] = await pool.query(
     nested(sql`
     SELECT users.user, users.avatar,
-          posts.content, posts.id, posts.time, posts.user_id
+          posts.content, posts.id, posts.time, posts.user_id,
+          response_type.verb, response_type.context, response_type.icon,
+          responder.user
     FROM posts
     LEFT JOIN users ON (users.id = posts.user_id)
+    LEFT JOIN response ON (response.post_id = posts.id)
+    LEFT JOIN response_type ON (response_type.id = response.response_type_id)
+    LEFT JOIN users AS responder ON (responder.id = response.user_id)
     ORDER BY time DESC
     LIMIT 50`)
   );
-
-  // INNER JOIN response ON (response.post_id = posts.id)
-  // INNER JOIN response_type ON (response_type.id = response.response_type_id)
 
   if (!posts || !posts[0]) {
     throw new Error(`No posts found`);
   }
 
-  return posts.map(({ posts: post, users: author }) => ({
-    ...post,
-    author
-  }));
+  let id = null;
+  let currentPost = null;
+  const mappedPosts = [];
+
+  for (const record of posts) {
+    const { posts: post, users: author, responder, response_type } = record;
+    if(post.id !== id) {
+      id = post.id;
+      currentPost = {
+        ...post,
+        author,
+        reactions: []
+      };
+      mappedPosts.push(currentPost);
+    }
+
+    if(response_type.verb) {
+      currentPost.reactions.push({
+        user: responder.user,
+        context: response_type.context,
+        icon: response_type.icon
+      });
+    }
+  }
+
+  return mappedPosts;
 }
 
 route.get('/',  async (req, res, next) => {
   try {
     res.state.posts = await fetchPosts();
+    res.state.reactionTypes = (await pool.query(sql`SELECT * FROM response_type;`))[0];
     req.found = true;
 
     next();
@@ -41,6 +66,25 @@ route.get('/',  async (req, res, next) => {
     next(e);
   }
 });
+
+route.post('/:id/react', async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const postId = req.params.id;
+    // TODO: CHeck post exists, reaction type exists
+    const reactionType = req.body.reactionType;
+
+    await pool.query(sql`INSERT INTO response (response_type_id, user_id, post_id)
+    VALUES(${reactionType}, ${userId}, ${postId})`);
+
+    req.found = true;
+    res.location('/');
+
+    next();
+  } catch(e) {
+    next(e);
+  }
+})
 
 route.post('/',  async (req, res, next) => {
   try {

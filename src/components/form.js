@@ -8,11 +8,18 @@ class Form extends React.Component {
   render () {
     const props = {...this.props};
     delete props.setState;
-    return <form  {...props} onSubmit={this.submit.bind(this)} />
+    return <form  {...props} onSubmit={this.submit.bind(this)} onClick={this.click.bind(this)} />
+  }
+
+  click(e) {
+    if (e.target.type==="submit") {
+      this.submitter = e.target;
+    }
+    setTimeout(() => this.submitter = null, 0);
   }
 
   submit(e) {
-    const data = fromEntries(collect(e.target));
+    const data = fromEntries(collect(e.target, this.submitter || null));
 
     fetch(e.target.action, {
       method: e.target.method,

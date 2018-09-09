@@ -4,7 +4,7 @@ import Post from './post';
 import Form from "./form";
 import { subscribe, unsubscribe } from "../service-worker";
 
-export default ({ user, posts, subscribed, pushAvailable }) => (
+export default ({ user, posts, subscribed, pushAvailable, reactionTypes }) => (
   <div>
     <div>
       { user.user }
@@ -25,7 +25,7 @@ export default ({ user, posts, subscribed, pushAvailable }) => (
         <Post
           post={post}
           key={post.id}
-          reactionTypes={[]}
+          reactionTypes={reactionTypes}
         />
       ))}
     </div>

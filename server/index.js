@@ -99,7 +99,12 @@ app.use((req, res, next) => {
       return;
     }
 
-    res.json(res.state);
+    const state = res.state;
+    if(!state.message) {
+      state.message = null;
+    }
+
+    res.json(state);
   } else {
     next();
   }
