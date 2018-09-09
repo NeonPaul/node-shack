@@ -137,4 +137,17 @@ route.post('/change', async (req, res, next) => {
   }
 });
 
+route.get('/logout', async (req, res, next) => {
+  try {
+    res.cookie('token', '', { maxAge: 0 });
+    req.found = true;
+    res.state.user = null;
+    req.user = null;
+    //res.location('/');
+    next();
+  }catch(e) {
+    next(e);
+  }
+});
+
 module.exports = route;
