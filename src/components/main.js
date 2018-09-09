@@ -13,6 +13,7 @@ export default ({ user, posts, subscribed, pushAvailable, reactionTypes, editing
             <button onClick={subscribe}>Enable Notifications</button> :
             <button onClick={unsubscribe}>Disable Notifications</button>
       ) }
+      <a href="/login/reset">Change password</a>
       <Form action="/login/logout"><button>Logout</button></Form>
     </div>
 

@@ -103,7 +103,9 @@ const verifyToken = async (t) => {
 
 route.get('/reset', async (req, res, next) => {
   try {
-    await verifyToken(req.query.token);
+    if (!req.user) {
+      await verifyToken(req.query.token);
+    }
 
     res.send(`<form method=post action="/login/change">
       <input type=hidden name=token value="${req.query.token}">
@@ -118,7 +120,7 @@ route.get('/reset', async (req, res, next) => {
 
 route.post('/change', async (req, res, next) => {
   try {
-    const user = await verifyToken(req.body.token);
+    const user = req.user || await verifyToken(req.body.token);
 
     const { password, passwordRepeat } = req.body;
 
