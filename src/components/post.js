@@ -33,7 +33,7 @@ export default class Post extends React.Component {
             {!editing ? (
               <div className="content box">
                 <div dangerouslySetInnerHTML={html(marked(post.content))} />
-                {editable && <a href={"?edit=" + post.id}>Edit</a>}
+                {editable && <Form><button name="edit" value={post.id}>Edit</button></Form>}
                 <Reactions
                   postId={post.id}
                   reactions={post.reactions}
@@ -41,7 +41,7 @@ export default class Post extends React.Component {
                 />
               </div>
             ) : (
-              <Form method="post" action="/">
+              <Form method="post" action={`/${post.id}/edit`}>
                 <Editor
                   value={this.state.content}
                   onChange={content => this.setState({ content })}

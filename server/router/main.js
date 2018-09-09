@@ -59,6 +59,7 @@ route.get('/',  async (req, res, next) => {
   try {
     res.state.posts = await fetchPosts();
     res.state.reactionTypes = (await pool.query(sql`SELECT * FROM response_type;`))[0];
+    res.state.editingId = req.query.edit || null;
     req.found = true;
 
     next();
@@ -76,6 +77,23 @@ route.post('/:id/react', async (req, res, next) => {
 
     await pool.query(sql`INSERT INTO response (response_type_id, user_id, post_id)
     VALUES(${reactionType}, ${userId}, ${postId})`);
+
+    req.found = true;
+    res.location('/');
+
+    next();
+  } catch(e) {
+    next(e);
+  }
+})
+
+route.post('/:id/edit', async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const postId = req.params.id;
+    const content = req.body.content;
+
+    await pool.query(sql`UPDATE posts SET content=${content} WHERE posts.id=${postId} AND posts.user_id=${userId}`);
 
     req.found = true;
     res.location('/');

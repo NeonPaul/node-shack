@@ -19,7 +19,8 @@ class App extends React.Component {
                 posts={this.state.posts || []}
                 subscribed={this.state.subscribed || false}
                 pushAvailable={this.state.pushAvailable || false }
-                reactionTypes={this.state.reactionTypes || [] }/> :
+                reactionTypes={this.state.reactionTypes || [] }
+                editingId={this.state.editingId || null}/> :
           <Login />
       }
     </State.Provider>

@@ -20,21 +20,33 @@ class Form extends React.Component {
 
   submit(e) {
     const data = fromEntries(collect(e.target, this.submitter || null));
+    const method = e.target.method;
+    let action = e.target.action;
 
-    fetch(e.target.action, {
-      method: e.target.method,
+    const options = {
+      method,
       headers: {
-        'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify(data),
       credentials: 'same-origin',
       redirect: 'follow'
-    }).then(res =>
-      res.headers.get('Content-Type').indexOf('json') > 0 ?
+    }
+
+    if(method === 'post') {
+      options.headers['Content-Type'] = 'application/json';
+      options.body = JSON.stringify(data);
+    } else {
+      action += '?' + Object.entries(data).map(entry => entry.map(encodeURIComponent).join('=')).join('&');
+    }
+
+    fetch(action, options).then(res => {
+      if(res.url !== location.toString()) {
+        history.pushState({}, '', res.url);
+      }
+      return res.headers.get('Content-Type').indexOf('json') > 0 ?
       res.json() :
       res.text().then(m => ({ message: m  }))
-    ).then(state => {
+    }).then(state => {
       this.props.setState(state);
     }).catch(e => {
       console.log(e);
