@@ -63,7 +63,8 @@ app.use(async (req, res, next) => {
     const { vapidKeys } = require('./push');
 
     const envs = {
-      VAPID_PUBLIC: vapidKeys.public
+      VAPID_PUBLIC: vapidKeys.public,
+      BASE_URL: getenv('BASE_URL', 'http://localhost:3000')
     };
 
     ST`<!doctype HTML>
