@@ -14,7 +14,8 @@ export default ({ user, posts, subscribed, pushAvailable, reactionTypes, editing
             <button onClick={unsubscribe}>Disable Notifications</button>
       ) }
       <a href="/login/reset">Change password</a>
-      <Form action="/login/logout"><button>Logout</button></Form>
+      <Form style={{display: "inline"}} action="/login/logout"><button>Logout</button></Form>
+      v10.0.0
     </div>
 
     <Form method="post">
