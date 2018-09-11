@@ -1,8 +1,11 @@
 const exporess = require('express');
 const sql = require('sql-tag');
+const getenv = require('getenv');
+const BASE_URL = getenv('BASE_URL', 'http://localhost:3000')
 
 const pool = require('../db');
 const { webpush } = require('../push');
+const mail = require('../mail');
 
 const route = new exporess.Router();
 const nested = opts => { opts.nestTables = true; return opts; }
@@ -118,6 +121,25 @@ route.post('/',  async (req, res, next) => {
     res.location('/');
 
     next();
+
+    const mentions = (req.body.content.match(/\B@[a-z0-9_]+/ig) || []).map(s => s.substr(1));
+
+    const [ users ] = await pool.query(sql`
+      SELECT * FROM users WHERE user IN (${mentions})
+    `);
+
+    const mails = [];
+
+    for (const user of users) {
+      mails.push(mail.send({
+        to: user,
+        subject: `${req.user.user} mentioned you in a post on the Gloveshack`,
+        text: `Hi ${user.user}! There's a post with your name on it waiting on the shack. Check it out: ${BASE_URL}`,
+        html: `Hi ${user.user}! There's a post with your name on it waiting on the shack. Check it out: <a href="${BASE_URL}">${BASE_URL}</a>`
+      }));
+    }
+
+    Promise.all(mails).then(r => console.log(r), e => console.log(e));
 
     // Notifications
     const [ channels ] = await pool.query(
