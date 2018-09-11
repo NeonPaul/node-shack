@@ -15,7 +15,7 @@ export default ({ user, posts, subscribed, pushAvailable, reactionTypes, editing
       ) }
       <a href="/login/reset">Change password</a>
       <Form style={{display: "inline"}} action="/login/logout"><button>Logout</button></Form>
-      v10.0.0
+      { VERSION }
     </div>
 
     <Form method="post">

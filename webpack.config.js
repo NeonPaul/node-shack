@@ -1,4 +1,11 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const GitRevisionPlugin = require('git-revision-webpack-plugin')
+const {DefinePlugin} = require('webpack');
+
+const gitRevisionPlugin = new GitRevisionPlugin({
+  lightweightTags: true
+});
+
 
 module.exports = {
   module: {
@@ -25,6 +32,9 @@ module.exports = {
     ]
   },
   plugins: [
-    new CopyWebpackPlugin(['src/manifest.json'])
+    new CopyWebpackPlugin(['src/manifest.json']),
+    new DefinePlugin({
+      'VERSION': JSON.stringify(gitRevisionPlugin.version())
+    })
   ]
 };
