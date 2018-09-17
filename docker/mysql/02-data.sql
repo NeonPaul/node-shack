@@ -1,18 +1,15 @@
 INSERT INTO `posts` (
   `user_id`,
   `content`,
-  `time`,
-  `bitchingabout`
+  `time`
 ) VALUES(
   '1',
   'Hello this is a post',
-  '2016-12-15 09:00:00',
-  '0'
+  '2016-12-15 09:00:00'
 ), (
   '1',
   'This is an even newer post',
-  '2017-01-11 14:00:12',
-  '0'
+  '2017-01-11 14:00:12'
 );
 
 

@@ -111,7 +111,7 @@ route.post('/',  async (req, res, next) => {
   try {
     await pool.query(
       sql`
-        INSERT INTO posts ( content, user_id, bitchingabout ) VALUES (${req.body.content}, ${req.user.id}, 0);
+        INSERT INTO posts ( content, user_id ) VALUES (${req.body.content}, ${req.user.id});
       `
     );
 

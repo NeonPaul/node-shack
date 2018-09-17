@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `hidden` tinyint(1) NOT NULL DEFAULT '0',
   `pinned` tinyint(1) NOT NULL DEFAULT '0',
-  `bitchingabout` int(11) NOT NULL,
+  `bitchingabout` int(11) NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11962 ;
 
