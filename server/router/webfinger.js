@@ -10,15 +10,15 @@ const route = new exporess.Router();
 
 route.get('/@:user', async (req, res, next) => {
     const [users] = await pool.query(
-      sql`SELECT * FROM users WHERE user=${req.params.user}`
+      sql`SELECT * FROM users WHERE user=${req.params.user.replace(/\./g, ' ')}`
     );
     const user = users[0];
 
-    const profile = getenv('BASE_URL') + '/@' + user.user;
+    const profile = getenv('BASE_URL') + '/@' + user.user.replace(/ /g, '.');
 
     res.json({
      '@context':         "https://www.w3.org/ns/activitystreams",
-     'id': profile, type: 'Person', preferredUsername: user.user, inbox: profile+'/inbox',
+     'id': profile, type: 'Person', name: user.user, preferredUsername: user.user.replace(/ /g, '.'), inbox: profile+'/inbox',
      'icon': { url: user.avatar, mediaType: 'img/png', type:'Image' }
     });
 });
@@ -31,11 +31,11 @@ route.get('/.well-known/webfinger',  async (req, res, next) => {
     const username = acc.split('@')[0];
 
     const [users] = await pool.query(
-      sql`SELECT * FROM users WHERE user=${username}`
+      sql`SELECT * FROM users WHERE user=${username} OR user=${username.replace(/\./g, ' ')}`
     );
     const user = users[0];
 
-    const profile = user && (getenv('BASE_URL') + '/@' + user.user);
+    const profile = user && (getenv('BASE_URL') + '/@' + user.user.replace(/ /g, '.'));
 
     res.json(user ? {
       subject: resource,
