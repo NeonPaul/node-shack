@@ -12,6 +12,7 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({
   extended: false
 }))
+router.use(require('./webfinger'));
 router.use('/login', login);
 
 loggedIn.use((req, res, next) => {
