@@ -8,6 +8,16 @@ const sha256 = data => crypto.createHash('sha256').update(data).digest('base64')
 
 const route = new exporess.Router();
 
+route.get('/@', async (req, res, next) => {
+  res.json({
+   '@context': "https://www.w3.org/ns/activitystreams",
+   'id': getenv('BASE_URL') + '/@',
+   type: 'Group', name: 'Shack', preferredUsername: 'shack',
+   inbox: getenv('BASE_URL') + '/inbox'
+   //'icon': { url: user.avatar, mediaType: 'img/png', type:'Image' }
+  });
+});
+
 route.get('/@:user', async (req, res, next) => {
     const [users] = await pool.query(
       sql`SELECT * FROM users WHERE user=${req.params.user.replace(/\./g, ' ')}`
@@ -30,12 +40,21 @@ route.get('/.well-known/webfinger',  async (req, res, next) => {
     const acc = resource.split(':')[1];
     const username = acc.split('@')[0];
 
-    const [users] = await pool.query(
-      sql`SELECT * FROM users WHERE user=${username} OR user=${username.replace(/\./g, ' ')}`
-    );
-    const user = users[0];
+    let user;
+    let profile;
 
-    const profile = user && (getenv('BASE_URL') + '/@' + user.user.replace(/ /g, '.'));
+    if (username === '_') {
+      user = {
+      }
+      profile = getenv('BASE_URL') + '/@'
+    } else {
+      const [users] = await pool.query(
+        sql`SELECT * FROM users WHERE user=${username} OR user=${username.replace(/\./g, ' ')}`
+      );
+      user = users[0];
+
+      profile = user && (getenv('BASE_URL') + '/@' + user.user.replace(/ /g, '.'));
+    }
 
     res.json(user ? {
       subject: resource,
@@ -49,6 +68,12 @@ route.get('/.well-known/webfinger',  async (req, res, next) => {
   } catch(e) {
     next(e);
   }
+});
+
+route.post('/inbox', (req, res, next) => {
+  // Todo: Post a message to the thread
+  // INSERT INTO post
+  res.json({});
 });
 
 module.exports = route;
