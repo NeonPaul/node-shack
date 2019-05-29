@@ -70,9 +70,25 @@ route.get('/.well-known/webfinger',  async (req, res, next) => {
   }
 });
 
-route.post('/inbox', (req, res, next) => {
-  // Todo: Post a message to the thread
-  // INSERT INTO post
+route.post('/inbox', async (req, res, next) => {
+  // Todo: Verify signature, sanitize content
+  return;
+
+  if(req.body.actor !== 'https://kith.kitchen/users/Paul') {
+    res.json({});
+    return;
+  }
+
+  const body =  JSON.stringify(req.body);
+  const sql = require('sql-tag');
+  const pool = require('../db');
+
+  await pool.query(
+      sql`
+        INSERT INTO posts ( content, user_id ) VALUES (${body}, 1);
+      `
+    );
+
   res.json({});
 });
 

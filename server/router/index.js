@@ -9,6 +9,7 @@ const router = express.Router();
 const loggedIn = express.Router();
 
 router.use(bodyParser.json());
+router.use(bodyParser.json({type: 'application/activity+json'}));
 router.use(bodyParser.urlencoded({
   extended: false
 }))
